@@ -1,11 +1,14 @@
 import * as THREE from 'three';
 
 import Grid from './grid.js';
+import Ui from './ui.js';
 
 import {OrbitControls} from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import {FontLoader} from '../node_modules/three/examples/jsm/loaders/FontLoader.js';
 
 const grid = new Grid; 
+const ui = new Ui; 
 
 const clock = new THREE.Clock();
 
@@ -13,6 +16,8 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x58ADCB);
 
 const loader = new GLTFLoader(); 
+const fontLoader = new FontLoader();
+
 const textureLoader = new THREE.TextureLoader();
 
 var mixers = []; 
@@ -26,6 +31,11 @@ scene.add(camera);
 
 var cameralight = new THREE.PointLight( new THREE.Color(1,1,1), 1);
 camera.add(cameralight);
+
+
+scene.add(ui.getTitle());
+scene.add(ui.getYear());
+scene.add(ui.getButton());
 
 
 var earthTexture = textureLoader.load('../Textures/Earth/earth.png');
