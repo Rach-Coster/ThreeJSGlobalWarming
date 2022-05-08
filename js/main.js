@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 
+import Grid from './grid.js';
+
 import {OrbitControls} from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 
-const clock = new THREE.Clock();
+const grid = new Grid; 
 
+const clock = new THREE.Clock();
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x58ADCB);
@@ -39,7 +42,7 @@ var beeSpecMap = textureLoader.load('../Textures/Bee/beeSpecMap.png');
 
 //Externalise models
 var bee = new THREE.Object3D(); 
-scene.add(bee);
+//scene.add(bee);
 
 loader.load('../Models/bee.gltf', (model) => {
     var anim = model.animations;
@@ -103,7 +106,7 @@ loader.load('../Models/bee.gltf', (model) => {
     const animMixer = new THREE.AnimationMixer(model);
     animMixer.clipAction(anim[0]).play(); 
     
-    scene.add(model);
+    //scene.add(model);
     mixers.push(animMixer);
 });
 
@@ -131,14 +134,25 @@ const cloudMaterial = new THREE.MeshPhongMaterial({
 var clouds = new THREE.Mesh(cloudGeometry, cloudMaterial)
 //earth.add(clouds); 
 
-const mapGeometry = new THREE.BoxGeometry(30, 15, 1); 
+const mapGeometry = new THREE.BoxGeometry(30, 15, 1);  
+
 const mapMaterial = new THREE.MeshPhongMaterial({
     map: earthTexture, 
     bumpMap: earthBumpMap
 });
 
 var map = new THREE.Mesh(mapGeometry, mapMaterial);
+
 scene.add(map);
+
+//Populates grid
+//grid.populateGrid("items").forEach(element => scene.add(element));
+
+var positions = []; 
+
+positions = grid.populateGrid("positions"); 
+
+scene.add(grid.getGridHelper());
 
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -153,12 +167,12 @@ var render = () => {
     
     var delta = clock.getDelta();
 
-    for(const mixer of mixers) {
-        mixer.update(delta); 
-    }
+    // for(const mixer of mixers) {
+    //     mixer.update(delta); 
+    // }
 
-    bee.position.x += 2 * delta; 
-    bee.position.y -= 2 * delta; 
+    // bee.position.x += 2 * delta; 
+    // bee.position.y -= 2 * delta; 
 
     //earth.rotation.y += 0.15 * delta;
     //clouds.rotation.y += 0.05 * delta;
