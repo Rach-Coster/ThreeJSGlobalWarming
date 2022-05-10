@@ -15,12 +15,15 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x58ADCB);
 
+const raycaster = new THREE.Raycaster(); 
+
 const loader = new GLTFLoader(); 
 const fontLoader = new FontLoader();
 
 const textureLoader = new THREE.TextureLoader();
-
 var mixers = []; 
+
+var cursor = new THREE.Vector2(); 
 
 const ratio = window.innerWidth / window.innerHeight; 
 var camera = new THREE.PerspectiveCamera(75, ratio, 0.1, 1000);
@@ -34,8 +37,12 @@ camera.add(cameralight);
 
 
 scene.add(ui.getTitle());
-scene.add(ui.getYear());
-scene.add(ui.getButton());
+
+var currentYear = ui.getYear();
+scene.add(currentYear);
+
+var button = ui.getButton();
+scene.add(button);
 
 
 var earthTexture = textureLoader.load('../Textures/Earth/earth.png');
@@ -152,15 +159,15 @@ const mapMaterial = new THREE.MeshPhongMaterial({
 });
 
 var map = new THREE.Mesh(mapGeometry, mapMaterial);
+map.name = "map"; 
 
 scene.add(map);
 
 //Populates grid
-//grid.populateGrid("items").forEach(element => scene.add(element));
+var itemArr = grid.populateGrid("items")
+itemArr.forEach(element => scene.add(element));
 
-var positions = []; 
-
-positions = grid.populateGrid("positions"); 
+var positions = grid.populateGrid("positions"); 
 
 scene.add(grid.getGridHelper());
 
@@ -170,13 +177,13 @@ document.body.appendChild(renderer.domElement);
 
 var controls = new OrbitControls(camera, renderer.domElement);
 
-
 var render = () => {
     renderer.render(scene, camera);
     controls.update();
     
     var delta = clock.getDelta();
 
+ 
     // for(const mixer of mixers) {
     //     mixer.update(delta); 
     // }
@@ -192,16 +199,41 @@ var render = () => {
 
 render(); 
 
-var resize = () => {
+window.addEventListener('resize', () => {
     var width = window.innerWidth;
     var height = window.innerHeight; 
     renderer.setSize(width, height);
-
+	
     camera.aspect = width / height; 
     camera.updateProjectionMatrix();
     renderer.render(scene, camera)
-};
+});
 
-window.addEventListener('resize', resize);
+document.addEventListener('pointerdown', (event) => {
+    cursor.x = (event.clientX / window.innerWidth) * 2 - 1; 
+    cursor.y = -(event.clientY / window.innerHeight) * 2 + 1; 
 
+    raycaster.setFromCamera(cursor, camera); 
+    
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    if(intersects.length > 0 && intersects[0].object.name == "button"){
+        ui.setYear(2); 
+
+        scene.remove(currentYear);
+        currentYear = ui.getYear();
+        
+        scene.add(currentYear);
+    }
+    else if(intersects.length > 0){
+        var selected = intersects[0].object; 
+        
+        if(itemArr.find(element => element.name == selected.name)){
+            if(selected.material.emissive.getHex() == "0xFFFF00")
+                selected.material.emissive.setHex(null);
+            
+            else
+                selected.material.emissive.setHex(0xFFFF00);
+        }
+    }
+});
 
