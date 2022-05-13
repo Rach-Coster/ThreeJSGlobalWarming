@@ -25435,58 +25435,15 @@
       "uri": "scene.bin"
     }
   ],
-  "extensionsRequired": [
-    "KHR_materials_pbrSpecularGlossiness"
-  ],
-  "extensionsUsed": [
-    "KHR_materials_pbrSpecularGlossiness"
-  ],
+
   "images": [
     {
       "uri": "../Textures/Bee/bee.png"
-    },
-    {
-      "uri": "../Textures/Bee/beeSpecMap.png"
-    },
-    {
-      "uri": "../Textures/Bee/beeNormalMap.png"
-    },
-    {
-      "uri": "../Textures/Bee/beeNormalMap.png"
     }
   ],
   "materials": [
     {
-      "doubleSided": true,
-      "extensions": {
-        "KHR_materials_pbrSpecularGlossiness": {
-          "diffuseFactor": [
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ],
-          "diffuseTexture": {
-            "index": 0
-          },
-          "glossinessFactor": 1.0,
-          "specularFactor": [
-            1.0,
-            1.0,
-            1.0
-          ],
-          "specularGlossinessTexture": {
-            "index": 1
-          }
-        }
-      },
-      "name": "material_0",
-      "normalTexture": {
-        "index": 2
-      },
-      "occlusionTexture": {
-        "index": 3
-      }
+      "doubleSided": true
     }
   ],
   "meshes": [

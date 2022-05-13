@@ -1,0 +1,162 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v1.3.48",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                5
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "name" : "polySurface223"
+        },
+        {
+            "mesh" : 0,
+            "name" : "polySurface267_lambert3_0"
+        },
+        {
+            "children" : [
+                1
+            ],
+            "name" : "polySurface267"
+        },
+        {
+            "children" : [
+                0,
+                2
+            ],
+            "name" : "RootNode"
+        },
+        {
+            "children" : [
+                3
+            ],
+            "name" : "8a235ba88739484f957c731f74d4e0e5.fbx",
+            "rotation" : [
+                0.7071068286895752,
+                0,
+                0,
+                0.7071068286895752
+            ]
+        },
+        {
+            "children" : [
+                4
+            ],
+            "name" : "Sketchfab_model",
+            "rotation" : [
+                -0.7071068286895752,
+                0,
+                0,
+                0.7071068286895752
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "doubleSided" : true,
+            "emissiveFactor" : [
+                0,
+                0,
+                0
+            ],
+            "name" : "lambert3",
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.9773247241973877,
+                    0.9773247241973877,
+                    0.9773247241973877,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "polySurface267_lambert3_0",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 6255,
+            "max" : [
+                1.4918224811553955,
+                3.513989210128784,
+                1.109336018562317
+            ],
+            "min" : [
+                -1.6010820865631104,
+                -0.07708685100078583,
+                -1.3191909790039062
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 6255,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 6255,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 22125,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 75060,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 75060,
+            "byteOffset" : 75060
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 50040,
+            "byteOffset" : 150120
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 44250,
+            "byteOffset" : 200160
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 244412,
+            "uri" : "coral.bin"
+        }
+    ]
+}
