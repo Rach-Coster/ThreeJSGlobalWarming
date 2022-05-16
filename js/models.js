@@ -56,8 +56,8 @@ class models {
             });
             
             model.position.x = position.x; 
-            model.position.y = position.y; 
-            model.position.z = 1.25;
+            model.position.y = position.y - 0.1; 
+            model.position.z = 1.45;
 
             model.rotation.x = rotation.x;
             model.rotation.y = rotation.y;
@@ -93,9 +93,9 @@ class models {
                 }
             });
             
-            model.position.x = position.x - 0.1; 
-            model.position.y = position.y - 0.2; 
-            model.position.z = 1.25;
+            model.position.x = position.x + 0.1;
+            model.position.y = position.y - 0.3; 
+            model.position.z = 1.45;
             
             coral.attach(model); 
         });
@@ -127,8 +127,8 @@ class models {
             
             
             model.position.x = position.x; 
-            model.position.y = position.y;
-            model.position.z = 1.25;
+            model.position.y = position.y - 0.1;
+            model.position.z = 1.45;
 
             const animMixer = new THREE.AnimationMixer(model);
             animMixer.clipAction(anim[0]).play();
