@@ -21,9 +21,11 @@ var beeTexture = textureLoader.load('../Textures/Bee/bee.png');
 
 var coralTexture = textureLoader.load('../Textures/Coral/coral.png');
 coralTexture.flipY = false;
+coralTexture.flipW = false;        
 
-var bee = new THREE.Object3D(); 
-var coral = new THREE.Object3D(); 
+var fishTexture = textureLoader.load('../Textures/Fish/fish.png');
+fishTexture.flipY = false; 
+
 
 //bee fly
 //'../Models/bee.gltf'
@@ -31,17 +33,19 @@ var coral = new THREE.Object3D();
 // rot x: THREE.MathUtils.degToRad(90), y: THREE.MathUtils.degToRad(45)
 //animID: 1
 class models {
-    loadBee(position, rotation, animId){
+    loadBee(position, rotation, animId, name){
+        var bee = new THREE.Object3D(); 
         loader.load('../Models/Bee/bee.gltf', (model) => {
             var anim = model.animations;
 
             model = model.scene; 
-            model.scale.setScalar(0.04);
+            model.scale.setScalar(0.035);
 
             model.traverse((object) => {
                 if(object.isMesh){
                     object.material = new THREE.MeshPhongMaterial({
                         map: beeTexture, 
+                        name: name
                         //normalMap: beeNormalMap, 
                         //aoMap: beeAoMap,
                         //specularMap: beeSpecMap,
@@ -53,7 +57,7 @@ class models {
             
             model.position.x = position.x; 
             model.position.y = position.y; 
-            model.position.z = position.z;
+            model.position.z = 1.25;
 
             model.rotation.x = rotation.x;
             model.rotation.y = rotation.y;
@@ -69,15 +73,17 @@ class models {
         return bee; 
     }
 
-    loadCoral(position){
+    loadCoral(position, name){
+        var coral = new THREE.Object3D();
         loader.load('../Models/Coral/coral.gltf', (model) => {
             model = model.scene; 
-            model.scale.setScalar(0.19);
+            model.scale.setScalar(0.15);
 
             model.traverse((object) => {
                 if(object.isMesh){
                     object.material = new THREE.MeshPhongMaterial({
-                        map: coralTexture
+                        map: coralTexture,
+                        name: name
                         //normalMap: beeNormalMap, 
                         //aoMap: beeAoMap,
                         //specularMap: beeSpecMap,
@@ -87,14 +93,50 @@ class models {
                 }
             });
             
-            model.position.x = position.x; 
-            model.position.y = position.y; 
-            model.position.z = 1;
+            model.position.x = position.x - 0.1; 
+            model.position.y = position.y - 0.2; 
+            model.position.z = 1.25;
             
             coral.attach(model); 
         });
 
         return coral;
+    }
+
+    loadFish(position, name){
+        var fish = new THREE.Object3D(); 
+        loader.load('../Models/Fish/fish.gltf', (model) => {
+            var anim = model.animations;
+
+            model = model.scene; 
+            model.scale.setScalar(0.05);
+
+            model.traverse((object) => {
+                if(object.isMesh){
+                    object.material = new THREE.MeshPhongMaterial({
+                        map: fishTexture, 
+                        name: name
+                        //normalMap: beeNormalMap, 
+                        //aoMap: beeAoMap,
+                        //specularMap: beeSpecMap,
+                       // specular: 0xA4A4A4,
+                       // shininess: 3
+                    });
+                }
+            });
+            
+            
+            model.position.x = position.x; 
+            model.position.y = position.y;
+            model.position.z = 1.25;
+
+            const animMixer = new THREE.AnimationMixer(model);
+            animMixer.clipAction(anim[0]).play();
+            fish.attach(model); 
+            mixers.push(animMixer); 
+        });
+
+        return fish;
     }
 
     loadMap(){

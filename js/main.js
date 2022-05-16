@@ -49,53 +49,61 @@ scene.add(map);
 //scene.add(bee1);
 
 //Example of idle bee
-var groundArr = [
-    264, 244, 206, 186, 187, 166, 146, 126,
-    285, 284, 283, 270, 249, 229, 250, 251,
-    231, 230, 211, 191, 171, 151, 291, 272,
-    252, 273, 293, 294, 274, 254, 295, 296,
-    310, 329, 275, 255, 235, 297, 236, 216,
-    196, 195, 197, 198, 157, 137, 156, 136, 
-    138, 118, 311
-];
-
-var coastArr = [
-    210, 86, 170, 130, 150, 127, 85,
-    165, 243, 192, 178, 118, 253, 207, 
-    205, 263, 185, 277, 234, 266
-];
 
 var itemArr = []; 
 
 var positions = grid.populateGrid("positions"); 
-//console.log(positions); 
 
-for(var i = 0; i < groundArr.length; i++){
-    var bee2Pos = new THREE.Vector3((positions[groundArr[i]].x - 0.3)  + i * 0.02, (positions[groundArr[i]].y + 0.1) + i * 0.01, 0.5); 
-    var bee2Rot = new THREE.Vector3(THREE.MathUtils.degToRad(90), 0, 0);
-    var bee2 = models.loadBee(bee2Pos, bee2Rot, 1); 
+var groundArr = [
+    206, 186, 266, 246, 226, 256,
+    251, 149, 155, 154, 130, 170,   
+    231, 211, 191, 171, 151, 152,
+    150, 170, 207, 227, 169, 135,
+    136, 134, 133, 115, 114, 116,
+    113, 124, 104, 105, 103, 257
+    
+];
 
-    itemArr.push(bee2); 
+// var beeArr = grid.populateWithBees(); 
+// for(var i = 0; i < groundArr.length; i++){
+//     scene.add(beeArr[groundArr[i]]);
+// }
 
-    scene.add(bee2);     
-}
+//beeArr.forEach(element => scene.add(element));
 
-for(var i = 0; i < coastArr.length; i++){
-    var coralPos = new THREE.Vector2((positions[coastArr[i]].x), positions[coastArr[i]].y);
-    var coral = models.loadCoral(coralPos);
+var coastArr = [
+    210, 230, 250, 97, 153, 166, 143,
+    165, 212, 258, 278, 118, 187, 109,
+    205, 185, 297, 267, 306, 123, 145, 
+    215, 195, 125, 164, 137, 252, 117,
+    270, 129, 225, 176, 237, 189, 190
+];
 
-    itemArr.push(coral);
+// var coralArr = grid.populateWithCoral();
+// for(var i = 0; i < coastArr.length; i++){
+//    scene.add(coralArr[coastArr[i]]);
+// } 
+//coralArr.forEach(element => scene.add(element));
 
-    scene.add(coral);
-}
+var seaArr = [
+    225, 275, 272, 291, 290, 229,
+    249, 269, 287, 245, 265,
+    126, 102, 122, 142, 143, 296, 
+    297, 318, 106, 82, 118, 138,
+    158, 233, 234, 253, 254, 122,
+    142, 141, 279
+]
 
-//scene.add(models.loadCoral()); 
+// var fishArr = grid.populateWithFish();
+// for(var i = 0; i < seaArr.length; i++){
+//     scene.add(fishArr[seaArr[i]]);
+// }
+
+//fishArr.forEach(element => scene.add(element)); 
 
 //Populates grid
-//var itemArr = grid.populateGrid("items")
-//itemArr.forEach(element => scene.add(element));
-
-// var itemArr = [];
+// var itemArr = grid.populateGrid("items");
+// itemArr.forEach(element => scene.add(element));
 
 scene.add(grid.getGridHelper());
 
@@ -144,7 +152,9 @@ document.addEventListener('pointerdown', (event) => {
 
     raycaster.setFromCamera(cursor, camera); 
     
-    const intersects = raycaster.intersectObjects(scene.children, true);
+    const intersects = raycaster.intersectObjects(scene.children);
+
+
     if(intersects.length > 0 && intersects[0].object.name == "button"){
         ui.setYear(2); 
 
@@ -153,13 +163,31 @@ document.addEventListener('pointerdown', (event) => {
         
         scene.add(currentYear);
     }
-    else if(intersects.length > 0){
+    
+    if(intersects.length > 0 && intersects[0].object.type != "GridHelper" ){
         var selected = intersects[0].object; 
-        
         if(itemArr.find(element => element.name == selected.name)){
-            //Temp for finding grid points
             console.log(itemArr.indexOf(selected));
             selected.visible = false;
+        }
+        
+        // var found = beeArr.find(element => element.name == selected.material.name);
+        // if(found){
+        //     //Temp for finding grid points
+        //     console.log(beeArr.indexOf(found));
+        //     selected.visible = false;
+        //}
+
+        var found = coralArr.find(element => element.name == selected.material.name)
+        if(found){
+            console.log(coralArr.indexOf(found));
+            selected.visible = false; 
+        }
+        // var found = fishArr.find(element => element.name == selected.material.name);
+        // if(found){
+        //     //Temp for finding grid points
+        //     console.log(fishArr.indexOf(found));
+        //     selected.visible = false;
             
             // if(selected.material.emissive.getHex() == "0xFFFF00")
             //     selected.material.emissive.setHex(null);
@@ -169,7 +197,7 @@ document.addEventListener('pointerdown', (event) => {
             //     selected.material.emissive.setHex(0xFFFF00);
             //     selected.visible = false;
             // }
-        }
+        
     }
 });
 
