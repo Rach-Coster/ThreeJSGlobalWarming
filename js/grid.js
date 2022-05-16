@@ -35,6 +35,8 @@ var coralArr = [];
 var beeArr = [];
 var fishArr = [];
 
+var itemPosArr = []; 
+
 class Grid { 
     getGridHelper() {
         const gridHelper = new THREE.GridHelper(20,20, 0x000000, 0x000000);
@@ -109,6 +111,7 @@ class Grid {
                 test.name = totalNo; 
                 
                 testMeshes.push(test); 
+                itemPosArr.push(itemPos);
 
                 if(coastArr.find(element => element == totalNo)){
                     var coral = models.loadCoral(itemPos, totalNo);
@@ -158,6 +161,10 @@ class Grid {
 
     getFishArray(){
         return fishArr;
+    }
+
+    getItemPosArray(){
+        return itemPosArr; 
     }
 };
 

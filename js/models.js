@@ -15,23 +15,28 @@ loader.setDRACOLoader(dracoLoader);
 var mixers = []; 
 
 var beeTexture = textureLoader.load('../Textures/Bee/bee.png');
-//var beeNormalMap = textureLoader.load('../Textures/Bee/beeNormalMap.png');
-//var beeAoMap = textureLoader.load('../Textures/Bee/beeAoMap.png');
-//var beeSpecMap = textureLoader.load('../Textures/Bee/beeSpecMap.png');
+var beeNormalMap = textureLoader.load('../Textures/Bee/beeNormalMap.png');
+var beeAoMap = textureLoader.load('../Textures/Bee/beeAoMap.png');
+var beeSpecMap = textureLoader.load('../Textures/Bee/beeSpecMap.png');
 
 var coralTexture = textureLoader.load('../Textures/Coral/coral.png');
 coralTexture.flipY = false;
 coralTexture.flipW = false;        
 
+var coralNormalMap = textureLoader.load('../Textures/Coral/coralNormalMap.png');
+coralNormalMap.flipY = false;
+coralTexture.flipW = false;    
+
 var fishTexture = textureLoader.load('../Textures/Fish/fish.png');
 fishTexture.flipY = false; 
 
+var fishNormalMap = textureLoader.load('../Textures/Fish/fishNormalMap.png');
+fishNormalMap.flipY = false; 
 
-//bee fly
-//'../Models/bee.gltf'
-// pos z: 0.5
-// rot x: THREE.MathUtils.degToRad(90), y: THREE.MathUtils.degToRad(45)
-//animID: 1
+
+var fishEmissive = textureLoader.load('../Textures/Fish/fishEmissive.png');
+fishEmissive.flipY = false; 
+
 class models {
     loadBee(position, rotation, animId, name){
         var bee = new THREE.Object3D(); 
@@ -45,12 +50,12 @@ class models {
                 if(object.isMesh){
                     object.material = new THREE.MeshPhongMaterial({
                         map: beeTexture, 
+                        normalMap: beeNormalMap, 
+                        aoMap: beeAoMap,
+                        specularMap: beeSpecMap,
+                        specular: 0xA4A4A4,
+                        shininess: 3,
                         name: name
-                        //normalMap: beeNormalMap, 
-                        //aoMap: beeAoMap,
-                        //specularMap: beeSpecMap,
-                       // specular: 0xA4A4A4,
-                       // shininess: 3
                     });
                 }
             });
@@ -83,12 +88,8 @@ class models {
                 if(object.isMesh){
                     object.material = new THREE.MeshPhongMaterial({
                         map: coralTexture,
+                        normalMap: coralNormalMap,
                         name: name
-                        //normalMap: beeNormalMap, 
-                        //aoMap: beeAoMap,
-                        //specularMap: beeSpecMap,
-                       // specular: 0xA4A4A4,
-                       // shininess: 3
                     });
                 }
             });
@@ -115,12 +116,9 @@ class models {
                 if(object.isMesh){
                     object.material = new THREE.MeshPhongMaterial({
                         map: fishTexture, 
+                        normalMap: fishNormalMap,
+                        emissive: fishEmissive,
                         name: name
-                        //normalMap: beeNormalMap, 
-                        //aoMap: beeAoMap,
-                        //specularMap: beeSpecMap,
-                       // specular: 0xA4A4A4,
-                       // shininess: 3
                     });
                 }
             });

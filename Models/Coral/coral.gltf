@@ -67,6 +67,11 @@
                 0
             ],
             "name" : "lambert3",
+            "normalTexture" : {
+                "index" : 0,
+                "scale" : 0.6297637224197388,
+                "texCoord" : 0
+            },
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
                     0.800000011920929,
@@ -93,6 +98,18 @@
                     "material" : 0
                 }
             ]
+        }
+    ],
+    "textures" : [
+        {
+            "source" : 0
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "lambert3_normal",
+            "uri" : "../../Textures/Coral/coralNormalMap.png"
         }
     ],
     "accessors" : [

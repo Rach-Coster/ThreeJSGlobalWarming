@@ -61,6 +61,8 @@ beeArr.forEach(element => scene.add(element));
 var fishArr = grid.getFishArray(); 
 fishArr.forEach(element => scene.add(element)); 
 
+var itemPosArr = grid.getItemPosArray(); 
+
 
 scene.add(grid.getGridHelper());
 
@@ -147,7 +149,6 @@ document.addEventListener('pointerdown', (event) => {
 
                 selected.material.transparent = false; 
                 selected.material.color.setHex(0xFFFF00); 
-                
 
                 originalName = selected.name;
                 itemInstance = coralArr.find(element => element.name == selected.name);
@@ -175,8 +176,8 @@ document.addEventListener('pointerdown', (event) => {
                         itemInstance = fishArr.find(element => element.name == selected.name);
                     } 
                 }
-    
             }    
+            
 
             else if(itemInstance && !selected.hasItem && priorGrid.hasItem){
 
@@ -185,11 +186,28 @@ document.addEventListener('pointerdown', (event) => {
 
                 priorGrid.material.transparent = true;
                 priorGrid.material.opacity = 0.0;  
-                
-                //Change offset
-                itemInstance.children[0].position.x = selected.position.x;
-                itemInstance.children[0].position.y = selected.position.y - 0.2; 
-
+               
+                if(itemInstance.itemType == "coral"){
+                    var coralInstance = coralArr.find(element => element.name == itemInstance.name);
+                    coralInstance.name = selected.name; 
+                    coralInstance.children[0].position.x = itemPosArr[selected.name].x + 0.1;
+                    coralInstance.children[0].position.y = itemPosArr[selected.name].y - 0.25; 
+                }
+                     
+                else if(itemInstance.itemType == "bee"){
+                    var beeInstance = beeArr.find(element => element.name == itemInstance.name);
+                    beeInstance.name = selected.name; 
+                    beeInstance.children[0].position.x = itemPosArr[selected.name].x + 0.1;
+                    beeInstance.children[0].position.y = itemPosArr[selected.name].y; 
+                } 
+                    
+                else if(itemInstance.itemType == "fish"){
+                    var fishInstance = fishArr.find(element => element.name == itemInstance.name);
+                    fishInstance.name = selected.name; 
+                    fishInstance.children[0].position.x = itemPosArr[selected.name].x;
+                    fishInstance.children[0].position.y = itemPosArr[selected.name].y - 0.1;  
+                }
+                                
                 priorGrid.hasItem = false;  
                 selected.hasItem = true; 
             }
@@ -203,8 +221,6 @@ document.addEventListener('pointerdown', (event) => {
                     priorGrid.material.transparent = true;                
             }
 
-            
-            
             priorGrid = selected; 
 
         }
