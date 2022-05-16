@@ -103,7 +103,8 @@ window.addEventListener('resize', () => {
     renderer.render(scene, camera)
 });
 
-var itemInstance; 
+var itemInstance;
+var originalName;  
 var priorGrid; 
 
 document.addEventListener('pointerdown', (event) => {
@@ -124,62 +125,87 @@ document.addEventListener('pointerdown', (event) => {
         scene.add(currentYear);
     }
 
-    if(intersects.length > 0 && intersects[0].object.type != "GridHelper" ){
+    //TODO: 
+    //Make it so that when you click on an object, the corresponding tile is clicked on
+    //
+    else if(intersects.length > 0 && intersects[0].object.type != "GridHelper"){
         var selected = intersects[0].object; 
-        
-        if(itemArr.find(element => element.name == selected.name)){
-            selected.material.transparent = false; 
+ 
+        if(!itemArr.find(element => element.name == selected.name)){
+            selected.name = selected.material.name; 
+        }
 
-            if(priorGrid){
-                priorGrid.material.transparent = true;
-                priorGrid.material.color.setHex(null);
-            }
+        if(selected.type == "SkinnedMesh" && selected.material.name ==  originalName){
+           selected.name = priorGrid.name;
+       }
 
-            if(selected.hasItem){
-                priorGrid = selected; 
-                selected.material.color.setHex(0xFFFF00);
+        var found = itemArr.find(element => element.name == selected.name); 
+        if(found){
+            selected = found; 
 
+            if(!priorGrid && selected.hasItem){
+
+                selected.material.transparent = false; 
+                selected.material.color.setHex(0xFFFF00); 
+                
+
+                originalName = selected.name;
                 itemInstance = coralArr.find(element => element.name == selected.name);
-  
                 if(!itemInstance){
                     itemInstance = beeArr.find(element => element.name == selected.name);
                     if(!itemInstance){
                         itemInstance = fishArr.find(element => element.name == selected.name);
-                    }
-
-                }  
+                    } 
+                }
             }
+            
+            else if(priorGrid != selected && selected.hasItem){
 
-            else if(!selected.hasItem && itemInstance){
-                var instanceElement; 
-                if(itemInstance.itemType == "coral"){
-                    instanceElement = coralArr.indexOf(itemInstance);
-                    coralArr[instanceElement].name = selected.name;
+                selected.material.transparent = false; 
+                selected.material.color.setHex(0xFFFF00);   
+
+                priorGrid.material.transparent = true;
+                priorGrid.material.opacity = 0.0;  
+
+                originalName = selected.name;
+                itemInstance = coralArr.find(element => element.name == selected.name);
+                if(!itemInstance){
+                    itemInstance = beeArr.find(element => element.name == selected.name);
+                    if(!itemInstance){
+                        itemInstance = fishArr.find(element => element.name == selected.name);
+                    } 
                 }
-                else if(itemInstance.itemType == "bee"){
-                    instanceElement = beeArr.indexOf(itemInstance);
-                    beeArr[instanceElement].name = selected.name;
-                }
-                else{
-                    instanceElement = fishArr.indexOf(itemInstance);
-                    fishArr[instanceElement].name = selected.name;
-                }
+    
+            }    
+
+            else if(itemInstance && !selected.hasItem && priorGrid.hasItem){
+
+                selected.material.transparent = false; 
+                selected.material.color.setHex(0x00FF00); 
+
+                priorGrid.material.transparent = true;
+                priorGrid.material.opacity = 0.0;  
+                
+                //Change offset
+                itemInstance.children[0].position.x = selected.position.x;
+                itemInstance.children[0].position.y = selected.position.y - 0.2; 
 
                 priorGrid.hasItem = false;  
                 selected.hasItem = true; 
-
-                priorGrid = selected;
-                selected.material.color.setHex(0x00FF00);
-                
-                itemInstance.children[0].position.x = selected.position.x;
-                itemInstance.children[0].position.y = selected.position.y; 
-
             }
 
-            else {
-               selected.material.transparent = true; 
+            else if(priorGrid == selected && selected.hasItem){
+                if(priorGrid.material.transparent){
+                    priorGrid.material.transparent = false;
+                    selected.material.color.setHex(0xFFFF00);
+                } 
+                else
+                    priorGrid.material.transparent = true;                
             }
+
             
+            
+            priorGrid = selected; 
 
         }
     }
