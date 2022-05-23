@@ -49,32 +49,6 @@ class Grid {
         return gridHelper; 
     }
 
-    populateWithFish(){
-        var fishArr = [];
-
-        var total = -13.5;
-        var totalY = 6.7;
-
-        for(var i = 0; i < 20; i++){
-            for(var j = 0; j < 20; j++){  
-                var position = new THREE.Vector2(
-                    total + (1.42 * j), 
-                    totalY + (-0.707 * i)
-                );
-                var name = i + " " + j; 
-
-                var fish = models.loadFish(position, name);
-                fish.name = name;
-                fishArr.push(fish);
-            }   
-
-            total = -13.5;
-            totalY = 6.7;
-        }
-
-        return fishArr; 
-
-    }
     populateGrid() {
         var testMeshes = [];
 
@@ -89,8 +63,7 @@ class Grid {
                 var testGeometry = new THREE.BoxGeometry(1.3, 0.65, 0.1);
                 var testMesh = new THREE.MeshPhongMaterial();
                 testMesh.map = testTexture; 
-                testMesh.opacity = 0.0;
-                testMesh.transparent = true;
+                testMesh.visible = false;
 
                 var test = new THREE.Mesh(testGeometry, testMesh);
 

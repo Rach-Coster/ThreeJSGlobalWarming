@@ -14,6 +14,9 @@ loader.setDRACOLoader(dracoLoader);
 
 var mixers = []; 
 
+var earthTexture = textureLoader.load('../Textures/Earth/earth.png');
+var earthBumpMap = textureLoader.load('../Textures/Earth/earthBumpMap.png');
+
 var beeTexture = textureLoader.load('../Textures/Bee/bee.png');
 var beeNormalMap = textureLoader.load('../Textures/Bee/beeNormalMap.png');
 var beeAoMap = textureLoader.load('../Textures/Bee/beeAoMap.png');
@@ -158,16 +161,10 @@ class models {
 
 export default models;
 
-var earthTexture = textureLoader.load('../Textures/Earth/earth.png');
-var earthBumpMap = textureLoader.load('../Textures/Earth/earthBumpMap.png');
+
 
 //var earthSpecMap = textureLoader.load('../Textures/Earth/earthSpecMap.png'); 
 //var clouds = textureLoader.load('../Textures/Earth/clouds.png');
-
-
-
-
-
 
 // loader.load('../Models/bee.gltf', (model) => {
 //     var anim = model.animations;

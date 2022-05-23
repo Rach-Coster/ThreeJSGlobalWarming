@@ -16,14 +16,14 @@ class Ui{
         const title = new THREE.Object3D();
         
         fontLoader.load('../node_modules/three/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-            const message = 'Hello World!';
+            const message = 'Climate Change Simulator';
         
             const shapes = font.generateShapes(message, 1);
             const geometry = new THREE.ShapeGeometry(shapes);
         
             const text = new THREE.Mesh(geometry, matDark);
        
-            text.position.x = -5;
+            text.position.x = -8;
             text.position.y = 9;
             text.position.z = 1;
 
@@ -61,7 +61,7 @@ class Ui{
             button.add(text);
         });
 
-        button.position.x = 4;
+        button.position.x = 8;
         button.position.y = 8.2;
         button.position.z = 0;
 
