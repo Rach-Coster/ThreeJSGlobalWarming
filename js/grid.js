@@ -37,6 +37,8 @@ var fishArr = [];
 
 var itemPosArr = []; 
 
+var circlePosArr = []; 
+
 class Grid { 
     getGridHelper() {
         const gridHelper = new THREE.GridHelper(20,20, 0x000000, 0x000000);
@@ -63,7 +65,7 @@ class Grid {
                 var testGeometry = new THREE.BoxGeometry(1.3, 0.65, 0.1);
                 var testMesh = new THREE.MeshPhongMaterial();
                 testMesh.map = testTexture; 
-                testMesh.visible = false;
+                testMesh.visible = false; 
 
                 var test = new THREE.Mesh(testGeometry, testMesh);
 
@@ -75,8 +77,14 @@ class Grid {
                 var itemPos = new THREE.Vector2(
                     totalX + (1.4201 * j), 
                     totalY + (-0.697 * i)
-                )
+                );
                 
+                //temp
+                var circlePos = new THREE.Vector2(
+                    (totalX - 0.75) + (1.5 * j),
+                    (totalY + 0.4) + (-0.75 * i)
+                )
+
                 test.position.x = gridPos.x; 
                 test.position.y = gridPos.y; 
                 test.position.z = 1.25;
@@ -85,6 +93,8 @@ class Grid {
                 
                 testMeshes.push(test); 
                 itemPosArr.push(itemPos);
+
+                circlePosArr.push(circlePos); 
 
                 if(coastArr.find(element => element == totalNo)){
                     var coral = models.loadCoral(itemPos, totalNo);
@@ -138,6 +148,10 @@ class Grid {
 
     getItemPosArray(){
         return itemPosArr; 
+    }
+    
+    getCirclePosArray(){
+        return circlePosArr;
     }
 };
 
