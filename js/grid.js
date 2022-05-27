@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import Models from './models.js';
+import Disasters from './disasters.js';
 
 const models = new Models; 
+const disasters = new Disasters; 
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -22,6 +24,28 @@ var groundArr = [
     113, 124, 104, 105, 103, 257  
 ];
 
+var firePosArr = [
+    206, 186, 266, 246, 226, 256,
+    251, 149, 155, 154, 130, 170,   
+    231, 211, 191, 171, 151, 152,
+    150, 170, 207, 227, 169, 135,
+    136, 134, 133, 115, 114, 116,
+    113, 124, 104, 105, 103, 257, 
+    144, 125, 132, 112, 90, 109,
+    91, 111, 277, 276, 278, 258,
+    175, 174, 286, 97
+];
+
+
+var wavePosArr = [
+    210, 230, 250, 153, 166, 143, 287,
+    165, 212, 258, 278, 187, 265, 305,
+    205, 185, 297, 267, 306, 123, 145, 
+    215, 164, 137, 252, 156, 247, 285,
+    270, 129, 225, 176, 237, 189, 190,
+    168, 192, 194, 109, 125, 110
+];
+
 var seaArr = [
     225, 275, 272, 291, 290, 229,
     249, 269, 287, 245, 265,
@@ -37,7 +61,10 @@ var fishArr = [];
 
 var itemPosArr = []; 
 
-var circlePosArr = []; 
+var circlePosArr = [];
+
+var fireArr = []; 
+var waveArr = []; 
 
 class Grid { 
     getGridHelper() {
@@ -81,9 +108,19 @@ class Grid {
                 
                 //temp
                 var circlePos = new THREE.Vector2(
-                    (totalX - 0.75) + (1.5 * j),
-                    (totalY + 0.4) + (-0.75 * i)
-                )
+                    totalX + (1.5 * j),
+                    totalY + (-0.75 * i)
+                );
+
+                var firePos = new THREE.Vector2(
+                    totalX + (1.49 * j),
+                    totalY + (-0.75 * i)
+                );
+                
+                var wavePos = new THREE.Vector2(
+                    totalX + (1.49 * j),
+                    totalY + (-0.75 * i)
+                );
 
                 test.position.x = gridPos.x; 
                 test.position.y = gridPos.y; 
@@ -95,6 +132,8 @@ class Grid {
                 itemPosArr.push(itemPos);
 
                 circlePosArr.push(circlePos); 
+                wavePosArr.push(wavePos); 
+
 
                 if(coastArr.find(element => element == totalNo)){
                     var coral = models.loadCoral(itemPos, totalNo);
@@ -121,9 +160,24 @@ class Grid {
 
                     test.hasItem = true;
                 }
-                else
+                else{
                     test.hasItem = false;
+                }
+
+
+                if(firePosArr.find(element => element == totalNo)){
+                    var fire = disasters.createFire(firePos);
+                    fire.name = totalNo; 
+                    fireArr.push(fire); 
+                }
+
+                if(wavePosArr.find(element => element == totalNo)){
+                    var wave = disasters.createWave(wavePos);
+                    wave.name = totalNo; 
+                    waveArr.push(wave); 
+                }
                 
+
                 totalNo++;
             }   
 
@@ -152,6 +206,14 @@ class Grid {
     
     getCirclePosArray(){
         return circlePosArr;
+    }
+    
+    getFireArray(){
+        return fireArr; 
+    }
+
+    getWaveArray(){
+        return waveArr; 
     }
 };
 

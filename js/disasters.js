@@ -15,8 +15,8 @@ class Disasters {
             var circleMaterial = new THREE.MeshBasicMaterial( {color: 0xFFFFF00, transparent: true, opacity: 0.5});
             var circleMesh = new THREE.Mesh(circleGeometry, circleMaterial);
          
-            circleMesh.position.x = position.x; 
-            circleMesh.position.y = position.y; 
+            circleMesh.position.x = position.x - 0.75; 
+            circleMesh.position.y = position.y + 0.4; 
             circleMesh.position.z = 0.5;
 
             circleMesh.scale.x = rand;
@@ -52,7 +52,7 @@ class Disasters {
         return circleArr; 
     }
 
-    createFire(){
+    createFire(position){
         var group = new THREE.Group(); 
         loader.load('../Svgs/fire.svg', (image) => {
             const paths = image.paths;
@@ -62,6 +62,8 @@ class Disasters {
 
                 const material = new THREE.MeshBasicMaterial({
                     color: path.color,
+                    transparent: true, 
+                    opacity: 0.7,
                     side: THREE.DoubleSide,
                 });
 
@@ -73,8 +75,8 @@ class Disasters {
                     const geometry = new THREE.ShapeGeometry(shape);
                     const mesh = new THREE.Mesh(geometry, material);
 
-                    mesh.position.x = 0; 
-                    mesh.position.y = 0; 
+                    mesh.position.x = position.x - 0.3; 
+                    mesh.position.y = position.y + 1; 
                     mesh.position.z = 0.6;
                     
                     mesh.scale.x = 0.002; 
@@ -92,7 +94,7 @@ class Disasters {
         return group; 
     }
 
-    createWave(){
+    createWave(position){
         var group = new THREE.Group(); 
         loader.load('../Svgs/wave.svg', (image) => {
             const paths = image.paths;
@@ -103,6 +105,8 @@ class Disasters {
                 
                 const material = new THREE.MeshBasicMaterial({
                     color: path.color,
+                    transparent: true, 
+                    opacity: 0.7,
                     side: THREE.DoubleSide,
                
                 });
@@ -115,8 +119,8 @@ class Disasters {
                     const geometry = new THREE.ShapeGeometry(shape);
                     const mesh = new THREE.Mesh(geometry, material);
 
-                    mesh.position.x = 0.2; 
-                    mesh.position.y = 0.25; 
+                    mesh.position.x = position.x - 1.2; 
+                    mesh.position.y = position.y + 1; 
                     mesh.position.z = 0.6;
                     
                     mesh.scale.x = 0.003; 

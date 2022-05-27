@@ -45,26 +45,15 @@ var map = models.loadMap();
 scene.add(map);
 
 
-
-// var fire1 = disasters.createFire(); 
-// var fire2 = disasters.createFire();
-
-//Original boundary positions for fire svg
-// fire1.position.x = -13.8;
-// fire1.position.y = 7.4;
-
-// fire2.position.x = -13.8;
-// fire2.position.y = 6.3;
-
-
-// scene.add(fire1);
-// scene.add(fire2); 
-
-// scene.add(disasters.createWave());
-
 //Populates grid
 var itemArr = grid.populateGrid();
 itemArr.forEach(element => scene.add(element));
+
+var fireArr = grid.getFireArray();
+fireArr.forEach(element => scene.add(element));
+
+var waveArr = grid.getWaveArray();
+waveArr.forEach(element => scene.add(element));
 
 
 var getRandom = () => {
@@ -243,8 +232,6 @@ var getEarthquakeItems = (circleArr) => {
     return eqArr; 
 }
 
-console.log(getEarthquakeItems(circleArr)); 
-
 
 document.addEventListener('pointerdown', (event) => {
     cursor.x = (event.clientX / window.innerWidth) * 2 - 1; 
@@ -271,7 +258,7 @@ document.addEventListener('pointerdown', (event) => {
         circleArr = disasters.getEarthquake(new THREE.Vector2(circlePosArr[x].x, circlePosArr[y].y));
         circleArr.forEach(element => { scene.add(element) });
         
-        console.log(getEarthquakeItems(circleArr)); 
+        // console.log(getEarthquakeItems(circleArr)); 
         
         ui.setYear(2); 
 
