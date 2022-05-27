@@ -5,7 +5,7 @@ const loader = new SVGLoader();
 
 var circleArr = []; 
 
-class Disasters {
+class Events {
     getEarthquake(position) {
         var rand = Math.floor(Math.random() * 5 + 1) * 0.1;
         
@@ -84,13 +84,11 @@ class Disasters {
 
                     mesh.rotation.z = THREE.MathUtils.degToRad(180);
 
-                    
                     group.add(mesh);
                 }
             }
         });
         
-
         return group; 
     }
 
@@ -129,15 +127,13 @@ class Disasters {
                     mesh.rotation.z = THREE.MathUtils.degToRad(180);
                     mesh.rotation.y = THREE.MathUtils.degToRad(180);
 
-                    
                     group.add(mesh);
                 }
             }
         });
-        
-
+    
         return group; 
     }
 }
 
-export default Disasters;
+export default Events;
