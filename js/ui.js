@@ -10,6 +10,7 @@ const matDark = new THREE.LineBasicMaterial({
 });
 
 var currentYear = 2050;
+var totalMoves = 10; 
 
 class Ui{ 
     getTitle(){
@@ -93,6 +94,39 @@ class Ui{
 
     setYear(amount){
         currentYear += amount;   
+    }
+
+    getMoves(){
+        const movesLeft = new THREE.Object3D();
+        
+        fontLoader.load('../node_modules/three/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+            var message = '';
+
+            if(totalMoves == 0)
+                message = 'Out of Moves';
+            
+            else
+                message = 'Moves Left: ' + totalMoves;
+     
+            const shapes = font.generateShapes(message, 0.6);
+            const geometry = new THREE.ShapeGeometry(shapes);
+        
+            const text = new THREE.Mesh(geometry, matDark);
+            
+            text.position.x = -11;
+            text.position.y = -8;
+            text.position.z = 1;
+
+            text.name = "movesLeft"; 
+            movesLeft.attach(text);
+
+        });
+
+        return movesLeft;
+    }
+
+    setMoves(amount) {
+        totalMoves = amount; 
     }
 }
 

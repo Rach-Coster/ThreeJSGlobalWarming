@@ -4,14 +4,11 @@ import Models from './models.js';
 import Grid from './grid.js';
 import Ui from './ui.js';
 
-import Events from './events.js';
-
 import {OrbitControls} from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 
 const models = new Models; 
 const grid = new Grid; 
 const ui = new Ui; 
-const event = new Events; 
 
 const clock = new THREE.Clock();
 
@@ -29,13 +26,19 @@ camera.lookAt(0, 0, 0);
 
 scene.add(camera);
 
-var cameralight = new THREE.PointLight( new THREE.Color(1,1,1), 1);
+var cameralight = new THREE.PointLight(new THREE.Color(1,1,1), 1);
 camera.add(cameralight);
 
 scene.add(ui.getTitle());
 
 var currentYear = ui.getYear();
 scene.add(currentYear);
+
+//Temp: Number should be 10
+var totalMoves = 3; 
+
+var movesLeft = ui.getMoves(); 
+scene.add(movesLeft);
 
 var button = ui.getButton();
 scene.add(button);
@@ -94,48 +97,6 @@ while(count != maxTokens){
     }
 }
 
-var fireArr = []; 
-
-var maxFire = 20; 
-var fireCount = 0; 
-
-while(fireCount != maxFire){
-    var random = Math.floor(Math.random() * tileArr.length);
-    if(!fireArr.length && tileArr[random].terrain == "land" || !fireArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "land"){
-        var eventToken = grid.addEvent(tileArr[random]);
-        fireArr.push(eventToken);
-        scene.add(eventToken);
-        fireCount++; 
-    }
-    
-    else {
-        random = Math.floor(Math.random() * tileArr.length);
-    }
-}
-
-fireCount = 0; 
-
-var waveArr = [];
-
-var maxWave = 5; 
-var waveCount = 0; 
-
-
-while(waveCount != maxWave){
-    var random = Math.floor(Math.random() * tileArr.length);
-    if(!waveArr.length && tileArr[random].terrain == "coast" || !waveArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "coast"){
-        var eventToken = grid.addEvent(tileArr[random]);
-        waveArr.push(eventToken);
-        scene.add(eventToken);
-        waveCount++; 
-    }
-    
-    else {
-        random = Math.floor(Math.random() * tileArr.length);
-    }
-}
-
-waveCount = 0; 
 
 var getEarthquakePosition = () => {
     //2 and 18
@@ -150,8 +111,86 @@ var getEarthquakePosition = () => {
     return tile; 
 }
 
-var earthquake = grid.addEvent(getEarthquakePosition(), "earthquake");
-earthquake.forEach(element => scene.add(element));
+var randEvent = Math.floor(Math.random() * 4);
+
+var randomEvent = () => {
+
+    var maxFire = 20; 
+    var maxHeatwave = 10; 
+    var maxWave = 20;
+
+    var eventArr = []; 
+    var eventCount = 0; 
+
+    if(randEvent == 0){
+        var randFire = Math.floor(Math.random() * maxFire) + 1; 
+
+        while(eventCount != randFire){
+            var random = Math.floor(Math.random() * tileArr.length);
+            if(!eventArr.length && tileArr[random].terrain == "land" || !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "land"){
+                var eventToken = grid.addEvent(tileArr[random]);
+                eventArr.push(eventToken);
+                scene.add(eventToken);
+                eventCount++; 
+            }
+            
+            else {
+                random = Math.floor(Math.random() * tileArr.length);
+            }
+        }
+        
+        return eventArr; 
+    }
+
+    else if(randEvent == 1){
+        var randHeatwave = Math.floor(Math.random() * maxHeatwave) + 1; 
+
+        while(eventCount != randHeatwave){
+            var random = Math.floor(Math.random() * tileArr.length);
+            if(!eventArr.length && tileArr[random].terrain == "coast" || !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "coast"){
+                var eventToken = grid.addEvent(tileArr[random]);
+                eventArr.push(eventToken);
+                scene.add(eventToken);
+                eventCount++; 
+            }
+            
+            else {
+                random = Math.floor(Math.random() * tileArr.length);
+            }
+        }
+
+        return eventArr; 
+    }
+ 
+    else if(randEvent == 2){
+        var randWave = Math.floor(Math.random() * maxWave) + 1; 
+
+        while(eventCount != randWave){
+            var random = Math.floor(Math.random() * tileArr.length);
+            if(!eventArr.length && tileArr[random].terrain == "sea" || !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "sea"){
+                var eventToken = grid.addEvent(tileArr[random]);
+                eventArr.push(eventToken);
+                scene.add(eventToken);
+                eventCount++; 
+            }
+            
+            else {
+                random = Math.floor(Math.random() * tileArr.length);
+            }
+        }
+
+        return eventArr; 
+    }
+
+    else {
+        eventArr = grid.addEvent(getEarthquakePosition(), "earthquake");
+        eventArr.forEach(element => scene.add(element));
+
+        return eventArr; 
+    }
+}
+
+var eventArr = randomEvent(randEvent); 
 
 
 //Animated example of bee
@@ -302,83 +341,49 @@ document.addEventListener('pointerdown', (event) => {
     
     const intersects = raycaster.intersectObjects(scene.children);
 
-
     if(intersects.length > 0 && intersects[0].object.name == "button"){
-        for(var i = 0; i < fireArr.length; i++){
-            scene.remove(fireArr[i]);
+
+        for(var i = 0; i < eventArr.length; i++){
+            scene.remove(eventArr[i]);
            
-            fireArr[i].children[0].geometry.dispose();
-            fireArr[i].children[1].material.dispose();
+            if(eventArr[i].eventType == "earthquake"){
+                eventArr[i].geometry.dispose();
+                eventArr[i].material.dispose();
+            }
+
+            else {
+                eventArr[i].children[0].geometry.dispose();
+                eventArr[i].children[1].material.dispose();
+            }
+            
         }
 
-        fireArr.splice(0, fireArr.length);
-
-        for(var i = 0; i < waveArr.length; i++){
-            scene.remove(waveArr[i]);
-           
-            waveArr[i].children[0].geometry.dispose();
-            waveArr[i].children[1].material.dispose();
-        }
-
-        waveArr.splice(0, waveArr.length);
-
-        for(var i = 0; i < earthquake.length; i++){
-            scene.remove(earthquake[i]);
-            earthquake[i].geometry.dispose();
-            earthquake[i].material.dispose();
-        }
-        earthquake.splice(0, earthquake.length);
+        eventArr.splice(0, eventArr.length);
 
         renderer.renderLists.dispose();
 
-        earthquake = grid.addEvent(getEarthquakePosition(), "earthquake");
-        earthquake.forEach(element => scene.add(element));
+        randEvent = Math.floor(Math.random() * 4);
+        eventArr = randomEvent(randEvent); 
 
-        while(fireCount != maxFire){
-            var random = Math.floor(Math.random() * tileArr.length);
-            if(!fireArr.length && tileArr[random].terrain == "land" || !fireArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "land"){
-                var eventToken = grid.addEvent(tileArr[random]);
-                fireArr.push(eventToken);
-                scene.add(eventToken);
-                fireCount++; 
-            }
-            
-            else {
-                random = Math.floor(Math.random() * tileArr.length);
-            }
-        }
-
-        fireCount = 0;
-
-        while(waveCount != maxWave){
-            var random = Math.floor(Math.random() * tileArr.length);
-            if(!waveArr.length && tileArr[random].terrain == "coast" || !waveArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "coast"){
-                var eventToken = grid.addEvent(tileArr[random]);
-                waveArr.push(eventToken);
-                scene.add(eventToken);
-                waveCount++; 
-            }
-            
-            else {
-                random = Math.floor(Math.random() * tileArr.length);
-            }
-        }
-
-        waveCount = 0; 
-        
-        
         // console.log(getEarthquakeItems(circleArr)); 
+    
+        scene.remove(currentYear);
         
         ui.setYear(2); 
-
-        scene.remove(currentYear);
         currentYear = ui.getYear();
-        
         scene.add(currentYear);
+        
+        scene.remove(movesLeft);
+        
+        //Change this to get totalMoves and setTotalMoves within the Ui class
+        totalMoves = 3; 
+        ui.setMoves(totalMoves);
 
+        movesLeft = ui.getMoves();
+        scene.add(movesLeft); 
     }
 
-    else if(intersects.length > 0 && intersects[0].object.type != "GridHelper"){
+    else if(intersects.length > 0 && intersects[0].object.type != "GridHelper" && totalMoves != 0){
         console.log("---Selected Tile---");
 
         var selected = intersects[0].object;
@@ -424,9 +429,23 @@ document.addEventListener('pointerdown', (event) => {
             
             else if(itemInstance && !selected.hasItem && priorGrid.hasItem && priorGrid.material.visible){
                 console.log("moves the item over to the new location")
+                
+                scene.remove(movesLeft);
 
+                totalMoves--;
+                ui.setMoves(totalMoves);
+                
+                movesLeft = ui.getMoves(); 
+                scene.add(movesLeft); 
+
+                console.log("Moves left: ", totalMoves); 
+                            
                 selected.material.visible = true; 
                 selected.material.color.setHex(0x00FF00); 
+
+                if(totalMoves == 0){
+                    selected.material.visible = false; 
+                }
 
                 priorGrid.material.visible = false; 
                    
@@ -467,6 +486,10 @@ document.addEventListener('pointerdown', (event) => {
         
             priorGrid = selected; 
         }
+    }
+
+    else if(totalMoves == 0){
+        console.log("Out of moves, please take your next turn");
     }
 });
 

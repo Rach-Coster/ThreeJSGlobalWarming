@@ -104,6 +104,7 @@ class Grid {
 
             totalX = -13.5;
             totalY = 6.7;
+            
         }
 
         return tileArr;
@@ -157,12 +158,18 @@ class Grid {
             }
     
             else if(tile.terrain == "coast"){
-                eventToken = event.createWave(eventOffsetArr[tile.name]);
+                eventToken = event.createHeatwave(eventOffsetArr[tile.name]);
                 eventToken.name = tile.name;
-                eventToken.eventType = "tsunami";
+                eventToken.eventType = "heatwave";
                 return eventToken;
             }
             
+            else if(tile.terrain == "sea"){
+                eventToken = event.createWave(eventOffsetArr[tile.name]);
+                eventToken.name = tile.name; 
+                eventToken.eventType = "tsunami"; 
+                return eventToken; 
+            }
             return null; 
         }
     }

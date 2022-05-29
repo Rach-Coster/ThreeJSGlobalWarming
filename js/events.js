@@ -21,6 +21,7 @@ class Events {
 
             circleMesh.scale.x = rand;
             circleMesh.scale.y = rand;
+            circleMesh.eventType = "earthquake";
 
             if(i == 0){
                 circleMesh.material.color.setHex(0xFFFFF00);
@@ -123,6 +124,49 @@ class Events {
                     
                     mesh.scale.x = 0.003; 
                     mesh.scale.y = 0.003; 
+
+                    mesh.rotation.z = THREE.MathUtils.degToRad(180);
+                    mesh.rotation.y = THREE.MathUtils.degToRad(180);
+
+                    group.add(mesh);
+                }
+            }
+        });
+    
+        return group; 
+    }
+
+    createHeatwave(position){
+        var group = new THREE.Group(); 
+        loader.load('../Svgs/heatwave.svg', (image) => {
+            const paths = image.paths;
+    
+
+            for(var i = 0; i < paths.length; i++){
+                const path = paths[i];
+                
+                const material = new THREE.MeshBasicMaterial({
+                    color: path.color,
+                    transparent: true, 
+                    opacity: 0.7,
+                    side: THREE.DoubleSide,
+               
+                });
+
+                const shapes = SVGLoader.createShapes(path);
+
+                for(var j = 0; j < shapes.length; j++){
+                    const shape = shapes[j];
+
+                    const geometry = new THREE.ShapeGeometry(shape);
+                    const mesh = new THREE.Mesh(geometry, material);
+
+                    mesh.position.x = position.x - 1.2; 
+                    mesh.position.y = position.y + 0.8; 
+                    mesh.position.z = 0.6;
+                    
+                    mesh.scale.x = 0.002; 
+                    mesh.scale.y = 0.002; 
 
                     mesh.rotation.z = THREE.MathUtils.degToRad(180);
                     mesh.rotation.y = THREE.MathUtils.degToRad(180);
