@@ -35,7 +35,7 @@ var currentYear = ui.getYear();
 scene.add(currentYear);
 
 //Temp: Number should be 10
-var totalMoves = 3; 
+var totalMoves = 10; 
 
 var movesLeft = ui.getMoves(); 
 scene.add(movesLeft);
@@ -52,6 +52,7 @@ var tileArr = grid.generateTiles();
 tileArr.forEach(element => { scene.add(element) });
 
 var tokenArr = []; 
+var deadTokenArr = []; 
 
 var maxBees = 20;
 var maxCoral = 20;
@@ -97,12 +98,12 @@ while(count != maxTokens){
     }
 }
 
+var randEvent = Math.floor(Math.random() * 4);
 
 var getEarthquakePosition = () => {
-    //2 and 18
     var randX = Math.floor(Math.random() * 16) + 2;
-
     var randYArr = [60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300];
+    
     var randY = Math.floor(Math.random() * randYArr.length);
     randY = randYArr[randY]; 
 
@@ -110,11 +111,7 @@ var getEarthquakePosition = () => {
 
     return tile; 
 }
-
-var randEvent = Math.floor(Math.random() * 4);
-
 var randomEvent = () => {
-
     var maxFire = 20; 
     var maxHeatwave = 10; 
     var maxWave = 20;
@@ -127,13 +124,16 @@ var randomEvent = () => {
 
         while(eventCount != randFire){
             var random = Math.floor(Math.random() * tileArr.length);
-            if(!eventArr.length && tileArr[random].terrain == "land" || !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "land"){
+            var deadToken = deadTokenArr.find(element => element.name == random);
+
+            if(!eventArr.length && tileArr[random].terrain == "land" && !deadToken || 
+                !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "land" && !deadToken){
+
                 var eventToken = grid.addEvent(tileArr[random]);
                 eventArr.push(eventToken);
                 scene.add(eventToken);
                 eventCount++; 
             }
-            
             else {
                 random = Math.floor(Math.random() * tileArr.length);
             }
@@ -147,7 +147,11 @@ var randomEvent = () => {
 
         while(eventCount != randHeatwave){
             var random = Math.floor(Math.random() * tileArr.length);
-            if(!eventArr.length && tileArr[random].terrain == "coast" || !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "coast"){
+            var deadToken = deadTokenArr.find(element => element.name == random);
+
+            if(!eventArr.length && tileArr[random].terrain == "coast" && !deadToken || 
+                !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "coast" && !deadToken){
+
                 var eventToken = grid.addEvent(tileArr[random]);
                 eventArr.push(eventToken);
                 scene.add(eventToken);
@@ -164,10 +168,14 @@ var randomEvent = () => {
  
     else if(randEvent == 2){
         var randWave = Math.floor(Math.random() * maxWave) + 1; 
-
+        
         while(eventCount != randWave){
             var random = Math.floor(Math.random() * tileArr.length);
-            if(!eventArr.length && tileArr[random].terrain == "sea" || !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "sea"){
+            var deadToken = deadTokenArr.find(element => element.name == random);
+
+            if(!eventArr.length && tileArr[random].terrain == "sea" && !deadToken || 
+                !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "sea" && !deadToken){
+
                 var eventToken = grid.addEvent(tileArr[random]);
                 eventArr.push(eventToken);
                 scene.add(eventToken);
@@ -183,15 +191,24 @@ var randomEvent = () => {
     }
 
     else {
-        eventArr = grid.addEvent(getEarthquakePosition(), "earthquake");
+        var earthquakePosition = getEarthquakePosition(); 
+        var deadToken = deadTokenArr.find(element => element.name == earthquakePosition.name);
+        
+        while(deadToken){
+            earthquakePosition = getEarthquakePosition(); 
+            deadToken = deadTokenArr.find(element => element.name == earthquakePosition.name);
+        }
+        
+        eventArr = grid.addEvent(earthquakePosition, "earthquake");
         eventArr.forEach(element => scene.add(element));
-
+        
         return eventArr; 
     }
 }
 
-var eventArr = randomEvent(randEvent); 
+var eventArr = randomEvent(); 
 
+console.log("Event Arr: ", eventArr);
 
 //Animated example of bee
 //Change to vector2 for rotation
@@ -201,13 +218,15 @@ var eventArr = randomEvent(randEvent);
 
 //scene.add(bee1);
 
-
 var renderer = new THREE.WebGLRenderer();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement); 
 
 var controls = new OrbitControls(camera, renderer.domElement);
+controls.enableRotate = false; 
+
+var mixers = models.getMixers(); 
 
 var render = () => {
     renderer.render(scene, camera);
@@ -215,10 +234,7 @@ var render = () => {
     
     var delta = clock.getDelta();
 
- 
-    for(const mixer of models.getMixers()) {
-        mixer.update(delta); 
-    }
+    mixers.forEach(element => element.update(delta));
 
     requestAnimationFrame(render); 
 };
@@ -238,100 +254,75 @@ window.addEventListener('resize', () => {
 var itemInstance;
 var priorGrid; 
 
+var getEarthquakeTilePositions = (tileName) => {
+    var eqArr = []; 
 
-// var getEarthquakeItems = (circleArr) => {
-//     var smallestAmtX = 1;
-//     var smallestAmtY = 1;  
-//     var index; 
+    eqArr.push(tileArr[tileName]);
 
-//     var eqArr = []; 
-
-//     for(var i = 0; i < itemArr.length; i++){
-//         var amtX = Math.abs(circleArr[0].position.x - itemArr[i].position.x);
-//         var amtY = Math.abs(circleArr[0].position.y - itemArr[i].position.y);
+    if(eventArr[0].scale.x.toFixed(1) == 0.2){
+        eqArr.push(tileArr[tileName + 20])
+        eqArr.push(tileArr[tileName - 20])
+    }
+    
+    else if(eventArr[0].scale.x.toFixed(1) == 0.3){
+        eqArr.push(tileArr[tileName + 1]);
+        eqArr.push(tileArr[tileName - 1]);
         
-//         if(amtX <= smallestAmtX && amtY <= smallestAmtY){
-//             smallestAmtX = amtX;
-//             smallestAmtY = amtY;
-//             index = i;
-//         }
-//     }
+        eqArr.push(tileArr[tileName + 20]);
+        eqArr.push(tileArr[tileName - 20]);
 
-//     var rounded = Math.round(circleArr[0].scale.x * 10) / 10; 
+        eqArr.push(tileArr[tileName + 19]);
+        eqArr.push(tileArr[tileName - 19]);
 
-//     eqArr.push(itemArr[index]);
-
-//     if(rounded == 0.2){
-//         eqArr.push(itemArr[index + 20])
-//         eqArr.push(itemArr[index - 20])
-//     }
-
-//     else if(rounded == 0.3){
-//         eqArr.push(itemArr[index + 1]);
-//         eqArr.push(itemArr[index - 1]);
+        eqArr.push(tileArr[tileName + 21]);
+        eqArr.push(tileArr[tileName - 21]);
+    }
         
-//         eqArr.push(itemArr[index + 20]);
-//         eqArr.push(itemArr[index - 20]);
+    else if(eventArr[0].scale.x.toFixed(1) == 0.4){
+        eqArr.push(tileArr[tileName + 1]);
+        eqArr.push(tileArr[tileName - 1]);
 
-//         eqArr.push(itemArr[index + 21]);
-//         eqArr.push(itemArr[index - 19]);
+        eqArr.push(tileArr[tileName + 20]);
+        eqArr.push(tileArr[tileName - 20]);
 
-//         eqArr.push(itemArr[index + 19]);
-//         eqArr.push(itemArr[index - 21]);
-//     }
+        eqArr.push(tileArr[tileName + 40]);
+        eqArr.push(tileArr[tileName - 40]);
 
-//     else if(rounded == 0.4){
-//         eqArr.push(itemArr[index + 1]);
-//         eqArr.push(itemArr[index - 1]);
+        eqArr.push(tileArr[tileName + 19]);
+        eqArr.push(tileArr[tileName - 19]);
 
-//         eqArr.push(itemArr[index + 20]);
-//         eqArr.push(itemArr[index - 20]);
+        eqArr.push(tileArr[tileName + 21]);
+        eqArr.push(tileArr[tileName - 21]);
+    }
+        
+    else if(eventArr[0].scale.x.toFixed(1) == 0.5){
+        eqArr.push(tileArr[tileName + 1]);
+        eqArr.push(tileArr[tileName - 1]);
 
-//         eqArr.push(itemArr[index + 40]);
-//         eqArr.push(itemArr[index - 40]);
+        eqArr.push(tileArr[tileName + 20]);
+        eqArr.push(tileArr[tileName - 20]);
 
-//         eqArr.push(itemArr[index + 21]);
-//         eqArr.push(itemArr[index - 19]);
+        eqArr.push(tileArr[tileName + 40]);
+        eqArr.push(tileArr[tileName - 40]);
 
-//         eqArr.push(itemArr[index + 19]);
-//         eqArr.push(itemArr[index - 21]);
+        eqArr.push(tileArr[tileName + 60]);
+        eqArr.push(tileArr[tileName - 60]);
 
-//         eqArr.push(itemArr[index + 41]);
-//         eqArr.push(itemArr[index - 39]);
+        eqArr.push(tileArr[tileName + 19]);
+        eqArr.push(tileArr[tileName - 19]);
 
-//         eqArr.push(itemArr[index + 39]);
-//         eqArr.push(itemArr[index - 41]);
-//     }
+        eqArr.push(tileArr[tileName + 21]);
+        eqArr.push(tileArr[tileName - 21]);
 
-//     else if(rounded == 0.5){
-//         eqArr.push(itemArr[index + 1]);
-//         eqArr.push(itemArr[index - 1]);
+        eqArr.push(tileArr[tileName + 39]);
+        eqArr.push(tileArr[tileName - 39]);
 
-//         eqArr.push(itemArr[index + 20]);
-//         eqArr.push(itemArr[index - 20]);
-
-//         eqArr.push(itemArr[index + 40]);
-//         eqArr.push(itemArr[index - 40]);
-
-//         eqArr.push(itemArr[index + 21]);
-//         eqArr.push(itemArr[index - 19]);
-
-//         eqArr.push(itemArr[index + 19]);
-//         eqArr.push(itemArr[index - 21]);
-
-//         eqArr.push(itemArr[index + 41]);
-//         eqArr.push(itemArr[index - 39]);
-
-//         eqArr.push(itemArr[index + 39]);
-//         eqArr.push(itemArr[index - 41]);
-
-//         eqArr.push(itemArr[index + 59]);
-//         eqArr.push(itemArr[index - 61]);
-//     }
-
-//     return eqArr; 
-// }
-
+        eqArr.push(tileArr[tileName + 41]);
+        eqArr.push(tileArr[tileName - 41]);
+    }
+    
+    return eqArr; 
+} 
 
 document.addEventListener('pointerdown', (event) => {
     cursor.x = (event.clientX / window.innerWidth) * 2 - 1; 
@@ -342,31 +333,87 @@ document.addEventListener('pointerdown', (event) => {
     const intersects = raycaster.intersectObjects(scene.children);
 
     if(intersects.length > 0 && intersects[0].object.name == "button"){
-
+        if(priorGrid && priorGrid.material.visible)
+            priorGrid.material.visible = false;      
+            
         for(var i = 0; i < eventArr.length; i++){
+            var foundToken; 
+            
             scene.remove(eventArr[i]);
            
             if(eventArr[i].eventType == "earthquake"){
+                var earthquakePosArr = getEarthquakeTilePositions(eventArr.name);
+                
+                for(var j = 0; j < earthquakePosArr.length; j++){
+                    foundToken = tokenArr.find(element => element.name == earthquakePosArr[j].name);
+                    
+                    if(foundToken){
+                        foundToken.traverse((token) => {
+                            if(token.isMesh){
+                                token.material.emissive = new THREE.Color(0xFFFFFF);
+                                token.material.emissiveIntensity = 0.75;
+                            }
+                        });
+    
+                        var tokenName = foundToken.name;
+                        var foundAnimation = mixers.find(element => element.getRoot().parent.name == tokenName);
+                    
+                        if(foundAnimation)
+                            foundAnimation.stopAllAction();
+
+                        tileArr[tokenName].material.visible = true;
+                        tileArr[tokenName].material.color.setHex(0xFF0000);
+        
+                        deadTokenArr.push(foundToken);
+                    }
+                        
+                }
                 eventArr[i].geometry.dispose();
                 eventArr[i].material.dispose();
             }
 
             else {
+                foundToken = tokenArr.find(element => element.name == eventArr[i].name);
+   
+                if(foundToken){                
+                    foundToken.traverse((token) => {
+                        if(token.isMesh){
+                            token.material.emissive = new THREE.Color(0xFFFFFF);
+                            token.material.emissiveIntensity = 0.75;
+                        }
+                    });
+
+                    var tokenName = foundToken.name;
+    
+                    var foundAnimation = mixers.find(element => element.getRoot().parent.name == tokenName);
+                    
+                    if(foundAnimation)
+                        foundAnimation.stopAllAction();
+
+
+                    tileArr[tokenName].material.visible = true;
+                    tileArr[tokenName].material.color.setHex(0xFF0000);
+    
+                    deadTokenArr.push(foundToken);
+
+                }
+   
                 eventArr[i].children[0].geometry.dispose();
                 eventArr[i].children[1].material.dispose();
-            }
+            } 
             
         }
-
         eventArr.splice(0, eventArr.length);
 
         renderer.renderLists.dispose();
 
         randEvent = Math.floor(Math.random() * 4);
-        eventArr = randomEvent(randEvent); 
 
-        // console.log(getEarthquakeItems(circleArr)); 
+        eventArr = randomEvent(); 
+        earthquakePosArr = getEarthquakeTilePositions(eventArr.name);
     
+        console.log("Event Arr: ", eventArr);
+
         scene.remove(currentYear);
         
         ui.setYear(2); 
@@ -376,7 +423,7 @@ document.addEventListener('pointerdown', (event) => {
         scene.remove(movesLeft);
         
         //Change this to get totalMoves and setTotalMoves within the Ui class
-        totalMoves = 3; 
+        totalMoves = 10; 
         ui.setMoves(totalMoves);
 
         movesLeft = ui.getMoves();
@@ -402,7 +449,9 @@ document.addEventListener('pointerdown', (event) => {
         }
 
         var found = tileArr.find(element => element.name == selected.name); 
-        if(found){
+        console.log("Found: ", found); 
+        
+        if(found && !found.material.visible){
             console.log("Item instance: ", itemInstance); 
             
             selected = found; 
@@ -480,11 +529,15 @@ document.addEventListener('pointerdown', (event) => {
                 } 
             }
 
-            else if(priorGrid && priorGrid.material.color.getHexString() == "00ff00"){
+            else if(priorGrid && priorGrid.material.color.getHex() == 0x00FF00){
                 priorGrid.material.visible = false; 
             }
         
             priorGrid = selected; 
+        }
+
+        else if(found && found.material.visible && found.material.color.getHex() != 0xFF0000){
+            found.material.visible = false; 
         }
     }
 
