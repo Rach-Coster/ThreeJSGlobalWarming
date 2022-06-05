@@ -34,9 +34,6 @@ scene.add(ui.getTitle());
 var currentYear = ui.getYear();
 scene.add(currentYear);
 
-//Temp: Number should be 10
-var totalMoves = 10; 
-
 var movesLeft = ui.getMoves(); 
 scene.add(movesLeft);
 
@@ -55,53 +52,62 @@ console.log("Tile Arr: ", tileArr);
 
 var tokenArr = []; 
 var deadTokenArr = []; 
+var eventArr = []; 
+
 //20, 20, 40
-var maxBees = 1;
-var maxCoral = 1;
-var maxFish = 1;
+var maxBees = 20;
+var maxCoral = 20;
+var maxFish = 40;
 
 var maxTokens = maxBees + maxCoral + maxFish; 
 
-var countBees = 0; 
-var countCoral = 0; 
-var countFish = 0;
+var randEvent = Math.floor(Math.random() * 4);
 
-var count = 0; 
-
-while(count != maxTokens){
-    var random = Math.floor(Math.random() * tileArr.length);
-    if(!tokenArr.length || !tokenArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain != "snow"){
-        if(tileArr[random].terrain == "land" && countBees < maxBees){
-            countBees++;    
-            var token = grid.addToken(tileArr[random]);
-            tokenArr.push(token);
-            scene.add(token); 
-            tileArr[random].hasItem = true; 
-            count++;
-        }
-            
-        else if(tileArr[random].terrain == "coast" && countCoral < maxCoral){
-            countCoral++;       
-            var token = grid.addToken(tileArr[random]);
-            tokenArr.push(token);
-            scene.add(token);
-            tileArr[random].hasItem = true; 
-            count++; 
-        }
-
-        else if(tileArr[random].terrain == "sea" && countFish < maxFish){
-            countFish++; 
-            var token = grid.addToken(tileArr[random]);
-            tokenArr.push(token);
-            scene.add(token);
-            tileArr[random].hasItem = true; 
-            count++;
+var newGame = () => {
+    var countBees = 0; 
+    var countCoral = 0; 
+    var countFish = 0;
+    
+    var count = 0; 
+    
+    while(count != maxTokens){
+        var random = Math.floor(Math.random() * tileArr.length);
+        if(!tokenArr.length || !tokenArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain != "snow"){
+            if(tileArr[random].terrain == "land" && countBees < maxBees){
+                countBees++;    
+                var token = grid.addToken(tileArr[random]);
+                tokenArr.push(token);
+                scene.add(token); 
+                tileArr[random].hasItem = true; 
+                count++;
+            }
+                
+            else if(tileArr[random].terrain == "coast" && countCoral < maxCoral){
+                countCoral++;       
+                var token = grid.addToken(tileArr[random]);
+                tokenArr.push(token);
+                scene.add(token);
+                tileArr[random].hasItem = true; 
+                count++; 
+            }
+    
+            else if(tileArr[random].terrain == "sea" && countFish < maxFish){
+                countFish++; 
+                var token = grid.addToken(tileArr[random]);
+                tokenArr.push(token);
+                scene.add(token);
+                tileArr[random].hasItem = true; 
+                count++;
+            }
         }
     }
-}
+    
+    eventArr = randomEvent(); 
 
-var randEvent = Math.floor(Math.random() * 4);
+    console.log("Event Arr: ", eventArr);
+}
  
+//Potential migration to grid.js
 var getEarthquakePosition = () => {
     var randX = Math.floor(Math.random() * 16) + 2;
     var randYArr = [60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300];
@@ -113,6 +119,7 @@ var getEarthquakePosition = () => {
 
     return tile; 
 }
+
 var randomEvent = () => {
     var maxFire = 20; 
     var maxHeatwave = 10; 
@@ -272,17 +279,7 @@ var randomEvent = () => {
     }
 }
 
-var eventArr = randomEvent(); 
-
-console.log("Event Arr: ", eventArr);
-
-//Animated example of bee
-//Change to vector2 for rotation
-//var bee1Pos = new THREE.Vector3(0, 0, 0.5);
-//var bee1Rot = new THREE.Vector3(THREE.MathUtils.degToRad(90), THREE.MathUtils.degToRad(45), 0);
-//var bee1 = models.loadBee(bee1Pos, bee1Rot, 1);
-
-//scene.add(bee1);
+newGame();
 
 var renderer = new THREE.WebGLRenderer();
 
@@ -317,11 +314,14 @@ window.addEventListener('resize', () => {
     renderer.setSize(width, height);
     renderer.render(scene, camera)
 });
+ 
+var tokenOffsetArr = grid.getTokenOffsetArray(); 
+var gameOverItems;
 
 var itemInstance;
 var priorGrid; 
+
 var gameOver = false;
-var tokenOffsetArr = grid.getTokenOffsetArray(); 
 
 var getEarthquakeTilePositions = (tileName) => {
     var eqArr = []; 
@@ -402,7 +402,7 @@ document.addEventListener('pointerdown', (event) => {
     const intersects = raycaster.intersectObjects(scene.children);
 
     if(intersects.length > 0 && intersects[0].object.name == "button" && !gameOver){
-        if(priorGrid && priorGrid.material.visible)
+        if(priorGrid && priorGrid.material.visible && priorGrid.material.color.getHex() != 0xFF0000)
             priorGrid.material.visible = false;      
             
         for(var i = 0; i < eventArr.length; i++){
@@ -469,34 +469,32 @@ document.addEventListener('pointerdown', (event) => {
                         if(foundAnimation)
                             foundAnimation.stopAllAction();
     
-    
                         tileArr[tokenName].material.visible = true;
                         tileArr[tokenName].material.color.setHex(0xFF0000);
         
                         deadTokenArr.push(foundToken);
     
-                    }      
-                                
-                   
+                    }                    
                 }
    
                 eventArr[i].children[0].geometry.dispose();
                 eventArr[i].children[1].material.dispose();
             } 
-            
         }
-        eventArr.splice(0, eventArr.length);
-
+        
         renderer.renderLists.dispose();
 
+        eventArr.splice(0, eventArr.length);
+
         if(deadTokenArr.length == maxTokens){
-            scene.add(ui.getGameOver());     
+            gameOverItems = ui.getGameOver(); 
+            scene.add(gameOverItems);     
 
             scene.remove(movesLeft);
-            ui.setMoves(0);
-
-            movesLeft = ui.getMoves();
-            scene.add(movesLeft);
+            
+            ui.setMoves(0);    
+            movesLeft = ui.getMoves(); 
+            scene.add(movesLeft); 
 
             gameOver = true;
         }
@@ -510,29 +508,92 @@ document.addEventListener('pointerdown', (event) => {
             console.log("Event Arr: ", eventArr);
 
             scene.remove(currentYear);
-            
-            ui.setYear(2); 
+            scene.remove(movesLeft); 
+
+            ui.setYear(ui.getYearText() + 2); 
             currentYear = ui.getYear();
             scene.add(currentYear);
-            
-            scene.remove(movesLeft);
-            
-            //Change this to get totalMoves and setTotalMoves within the Ui class
-            totalMoves = 10; 
-            ui.setMoves(totalMoves);
-
-            movesLeft = ui.getMoves();
-            scene.add(movesLeft);
-        }
-         
+             
+            ui.setMoves(10);
+                
+            movesLeft = ui.getMoves(); 
+            scene.add(movesLeft); 
+        } 
     }
-
     
     else if(intersects.length > 0 && intersects[0].object.name == "newGame"){
-       console.log("New game!");
+        console.log("New game!");
+        console.log("Game over arr ", gameOverItems); 
+        
+        console.log("scene ", scene); 
+
+        deadTokenArr.forEach(element => {
+            tileArr[element.name].material.color.setHex(0xFFFFFF);
+            tileArr[element.name].material.visible = false;
+
+            element.traverse((token) => {
+                if(token.isMesh){
+                    token.geometry.dispose();
+                    token.material.dispose();
+                    
+                }
+            });
+
+            scene.remove(element);
+        });
+
+        deadTokenArr.splice(0, deadTokenArr.length);
+        tokenArr.splice(0, tokenArr.length);
+
+        for(var i = 0; i < gameOverItems.children.length; i++){
+            if(gameOverItems.children[i].type != "Group"){
+                gameOverItems.children[i].geometry.dispose();
+
+                if(gameOverItems.children[i].material.length <= 2){
+                    for(var j = 0; j < gameOverItems.children[i].material.length; j++){
+                        gameOverItems.children[i].material[j].dispose();
+                    }
+                }
+
+                else{
+                    gameOverItems.children[i].material.dispose();
+                }
+            }         
+            else {
+                for(var j = 0; j < gameOverItems.children[i].children.length; j++){
+                    gameOverItems.children[i].children[j].geometry.dispose(); 
+                    gameOverItems.children[i].children[j].material.dispose();
+                }
+                
+            }
+        }
+
+        scene.remove(gameOverItems);
+        
+        renderer.renderLists.dispose();
+
+        gameOverItems = null; 
+        gameOver = false;
+        
+        scene.remove(currentYear);
+            
+        ui.setYear(2050); 
+        currentYear = ui.getYear();
+        scene.add(currentYear);
+        
+        scene.remove(movesLeft);
+        
+        //Change this to get totalMoves and setTotalMoves within the Ui class 
+        ui.setMoves(10);
+
+        movesLeft = ui.getMoves();
+        scene.add(movesLeft);
+
+        newGame(); 
+    
     }
 
-    else if(intersects.length > 0 && intersects[0].object.type != "GridHelper" && totalMoves != 0){
+    else if(intersects.length > 0 && intersects[0].object.type != "GridHelper" && ui.getMovesText() != 0){
         console.log("---Selected Tile---");
 
         var selected = intersects[0].object;
@@ -583,18 +644,17 @@ document.addEventListener('pointerdown', (event) => {
                 
                 scene.remove(movesLeft);
 
-                totalMoves--;
-                ui.setMoves(totalMoves);
+                ui.setMoves(ui.getMovesText() - 1);
                 
                 movesLeft = ui.getMoves(); 
                 scene.add(movesLeft); 
 
-                console.log("Moves left: ", totalMoves); 
+                console.log("Moves left: ", ui.getMovesText()); 
                             
                 selected.material.visible = true; 
                 selected.material.color.setHex(0x00FF00); 
 
-                if(totalMoves == 0){
+                if(ui.getMovesText() == 0){
                     selected.material.visible = false; 
                 }
 
@@ -643,7 +703,7 @@ document.addEventListener('pointerdown', (event) => {
         }
     }
 
-    else if(totalMoves == 0){
+    else if(ui.getMovesText() == 0){
         console.log("Out of moves, please take your next turn");
     }
 });

@@ -106,8 +106,12 @@ class Ui{
         return year; 
     }
 
+    getYearText(){
+        return currentYear;
+    }
+
     setYear(amount){
-        currentYear += amount;   
+        currentYear = amount;   
     }
 
     getMoves(){
@@ -139,6 +143,10 @@ class Ui{
         return movesLeft;
     }
 
+    getMovesText(){
+        return totalMoves;
+    }
+    
     setMoves(amount) {
         totalMoves = amount; 
     }
