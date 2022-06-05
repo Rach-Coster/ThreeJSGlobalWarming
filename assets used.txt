@@ -1,0 +1,9 @@
+Assets: 
+
+-earth: https://3dexport.com/free-3dmodel-earth-and-moon-153231.htm
+-bee: https://sketchfab.com/3d-models/bee-5e5fb95c31d14d4082d20836465e2bfc
+-fish: https://sketchfab.com/3d-models/der-wanderer-clownfish-a1976e3e4b1d427c9337e09b544ea5cd
+-coral: https://sketchfab.com/3d-models/coral-piece-bd879158d2c9496fa40eb9a8fd8e75f8
+-wave: iconfinder.com/icons/5296676/ocean_sea_splash_surf_water_wave_icon
+-temperature: https://iconscout.com/icon/hot-temperature-4235719
+-fire: https://uxwing.com/hot-icon/
