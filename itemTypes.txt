@@ -1,7 +1,0 @@
-- Trees
-- Bees done
-- Coral done
-- People
-- Fish
-
-Each turn is two years (starts at 2050)

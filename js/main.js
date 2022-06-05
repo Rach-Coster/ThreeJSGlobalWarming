@@ -51,6 +51,8 @@ scene.add(grid.getGridHelper());
 var tileArr = grid.generateTiles();
 tileArr.forEach(element => { scene.add(element) });
 
+console.log("Tile Arr: ", tileArr);
+
 var tokenArr = []; 
 var deadTokenArr = []; 
 
@@ -99,7 +101,7 @@ while(count != maxTokens){
 }
 
 var randEvent = Math.floor(Math.random() * 4);
-
+ 
 var getEarthquakePosition = () => {
     var randX = Math.floor(Math.random() * 16) + 2;
     var randYArr = [60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280, 300];
@@ -125,20 +127,41 @@ var randomEvent = () => {
         while(eventCount != randFire){
             var random = Math.floor(Math.random() * tileArr.length);
             var deadToken = deadTokenArr.find(element => element.name == random);
-
+              
             if(!eventArr.length && tileArr[random].terrain == "land" && !deadToken || 
                 !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "land" && !deadToken){
 
-                var eventToken = grid.addEvent(tileArr[random]);
-                eventArr.push(eventToken);
-                scene.add(eventToken);
-                eventCount++; 
+                if(randFire - 1 == eventCount && !eventArr.find(element => tileArr[element.name].hasItem == true) && randFire > 3){
+                    var tileHasItem = tileArr[random].hasItem; 
+                    var deadTokenCount = 0;
+
+                    deadTokenArr.forEach(element => {
+                        if(element.tokenType == "bee"){
+                            deadTokenCount++;
+                        }
+                    });
+                    
+                    if(tileHasItem || deadTokenCount == maxBees){
+                        var eventToken = grid.addEvent(tileArr[random]);
+                        eventArr.push(eventToken);
+                        scene.add(eventToken);
+                        eventCount++;
+                    }
+                }
+
+                else {
+                    var eventToken = grid.addEvent(tileArr[random]);
+                    eventArr.push(eventToken);
+                    scene.add(eventToken);
+                    eventCount++;
+                }
             }
+
             else {
                 random = Math.floor(Math.random() * tileArr.length);
             }
         }
-        
+
         return eventArr; 
     }
 
@@ -151,11 +174,34 @@ var randomEvent = () => {
 
             if(!eventArr.length && tileArr[random].terrain == "coast" && !deadToken || 
                 !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "coast" && !deadToken){
+                
+                if(randHeatwave - 1 == eventCount && !eventArr.find(element => tileArr[element.name].hasItem == true) && randHeatwave > 3){
+                    var tileHasItem = tileArr[random].hasItem; 
+                    var deadTokenCount = 0;
 
-                var eventToken = grid.addEvent(tileArr[random]);
-                eventArr.push(eventToken);
-                scene.add(eventToken);
-                eventCount++; 
+                    deadTokenArr.forEach(element => {
+                        if(element.tokenType == "coral"){
+                            deadTokenCount++;
+                        }
+                    });
+
+                    
+                    
+                    if(tileHasItem || deadTokenCount == maxCoral){
+                        var eventToken = grid.addEvent(tileArr[random]);
+                        eventArr.push(eventToken);
+                        scene.add(eventToken);
+                        eventCount++;
+                    }
+                }
+                
+                else {
+                    var eventToken = grid.addEvent(tileArr[random]);
+                    eventArr.push(eventToken);
+                    scene.add(eventToken);
+                    eventCount++;
+                }
+                 
             }
             
             else {
@@ -176,10 +222,30 @@ var randomEvent = () => {
             if(!eventArr.length && tileArr[random].terrain == "sea" && !deadToken || 
                 !eventArr.find(element => element.name == tileArr[random].name) && tileArr[random].terrain == "sea" && !deadToken){
 
-                var eventToken = grid.addEvent(tileArr[random]);
-                eventArr.push(eventToken);
-                scene.add(eventToken);
-                eventCount++; 
+                if(randWave - 1 == eventCount && !eventArr.find(element => tileArr[element.name].hasItem == true) && randWave > 3){
+                    var tileHasItem = tileArr[random].hasItem; 
+                    var deadTokenCount = 0;
+
+                    deadTokenArr.forEach(element => {
+                        if(element.tokenType == "fish"){
+                            deadTokenCount++;
+                        }
+                    });
+                    
+                    if(tileHasItem || deadTokenCount == maxFish){
+                        var eventToken = grid.addEvent(tileArr[random]);
+                        eventArr.push(eventToken);
+                        scene.add(eventToken);
+                        eventCount++;
+                    }
+                }
+                
+                else {
+                    var eventToken = grid.addEvent(tileArr[random]);
+                    eventArr.push(eventToken);
+                    scene.add(eventToken);
+                    eventCount++;
+                }
             }
             
             else {
@@ -231,7 +297,7 @@ var mixers = models.getMixers();
 var render = () => {
     renderer.render(scene, camera);
     controls.update();
-    
+
     var delta = clock.getDelta();
 
     mixers.forEach(element => element.update(delta));
@@ -243,16 +309,18 @@ render();
 
 window.addEventListener('resize', () => {
     var width = window.innerWidth;
-    var height = window.innerHeight; 
-    renderer.setSize(width, height);
+    var height = window.innerHeight;
 	
     camera.aspect = width / height; 
     camera.updateProjectionMatrix();
+
+    renderer.setSize(width, height);
     renderer.render(scene, camera)
 });
 
 var itemInstance;
 var priorGrid; 
+var tokenOffsetArr = grid.getTokenOffsetArray(); 
 
 var getEarthquakeTilePositions = (tileName) => {
     var eqArr = []; 
@@ -346,8 +414,46 @@ document.addEventListener('pointerdown', (event) => {
                 
                 for(var j = 0; j < earthquakePosArr.length; j++){
                     foundToken = tokenArr.find(element => element.name == earthquakePosArr[j].name);
-                    
                     if(foundToken){
+                        var tokenStatus = deadTokenArr.find(element => element.name == foundToken.name);
+                        if(!tokenStatus){
+
+
+                            foundToken.traverse((token) => {
+                                if(token.isMesh){
+                                    token.material.emissive = new THREE.Color(0xFFFFFF);
+                                    token.material.emissiveIntensity = 0.75;
+                                }
+                            });
+        
+                            var tokenName = foundToken.name;
+                            var foundAnimation = mixers.find(element => element.getRoot().parent.name == tokenName);
+                        
+                            if(foundAnimation)
+                                foundAnimation.stopAllAction();
+
+                            tileArr[tokenName].material.visible = true;
+                            tileArr[tokenName].material.color.setHex(0xFF0000);
+            
+                            deadTokenArr.push(foundToken);
+                        }
+                    }
+                        
+                }
+
+                eventArr[i].geometry.dispose();
+                eventArr[i].material.dispose();
+            }
+
+            else {
+                foundToken = tokenArr.find(element => element.name == eventArr[i].name);
+        
+                if(foundToken){  
+                    
+                    var tokenStatus = deadTokenArr.find(element => element.name == foundToken.name);
+                    
+                    if(!tokenStatus){
+
                         foundToken.traverse((token) => {
                             if(token.isMesh){
                                 token.material.emissive = new THREE.Color(0xFFFFFF);
@@ -356,46 +462,21 @@ document.addEventListener('pointerdown', (event) => {
                         });
     
                         var tokenName = foundToken.name;
+        
                         var foundAnimation = mixers.find(element => element.getRoot().parent.name == tokenName);
-                    
+                        
                         if(foundAnimation)
                             foundAnimation.stopAllAction();
-
+    
+    
                         tileArr[tokenName].material.visible = true;
                         tileArr[tokenName].material.color.setHex(0xFF0000);
         
                         deadTokenArr.push(foundToken);
-                    }
-                        
-                }
-                eventArr[i].geometry.dispose();
-                eventArr[i].material.dispose();
-            }
-
-            else {
-                foundToken = tokenArr.find(element => element.name == eventArr[i].name);
-   
-                if(foundToken){                
-                    foundToken.traverse((token) => {
-                        if(token.isMesh){
-                            token.material.emissive = new THREE.Color(0xFFFFFF);
-                            token.material.emissiveIntensity = 0.75;
-                        }
-                    });
-
-                    var tokenName = foundToken.name;
     
-                    var foundAnimation = mixers.find(element => element.getRoot().parent.name == tokenName);
-                    
-                    if(foundAnimation)
-                        foundAnimation.stopAllAction();
-
-
-                    tileArr[tokenName].material.visible = true;
-                    tileArr[tokenName].material.color.setHex(0xFF0000);
-    
-                    deadTokenArr.push(foundToken);
-
+                    }      
+                                
+                   
                 }
    
                 eventArr[i].children[0].geometry.dispose();
@@ -499,8 +580,8 @@ document.addEventListener('pointerdown', (event) => {
                 priorGrid.material.visible = false; 
                    
                 itemInstance.name = selected.name; 
-                itemInstance.children[0].position.x = tileArr[selected.name].position.x;
-                itemInstance.children[0].position.y = tileArr[selected.name].position.y;
+                itemInstance.children[0].position.x = tokenOffsetArr[selected.name].x
+                itemInstance.children[0].position.y = tokenOffsetArr[selected.name].y;
                     
                 itemInstance.traverse((object) => {
                     if(object.isMesh){

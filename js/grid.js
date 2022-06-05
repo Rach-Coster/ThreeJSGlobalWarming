@@ -7,6 +7,7 @@ const event = new Events;
 
 const textureLoader = new THREE.TextureLoader();
 
+var tokenOffsetArr = []; 
 var eventOffsetArr = []; 
 
 class Grid { 
@@ -77,10 +78,10 @@ class Grid {
                     tile.terrain = "sea"; 
                 }
 
-                // var itemPos = new THREE.Vector2(
-                //     totalX + (1.4201 * j), 
-                //     totalY + (-0.697 * i)
-                // );
+                var tokenPos = new THREE.Vector2(
+                    totalX + (1.4201 * j), 
+                    totalY + (-0.697 * i)
+                );
                 
 
                 var eventPos = new THREE.Vector2(
@@ -88,6 +89,7 @@ class Grid {
                     totalY + (-0.75 * i)
                 );
 
+                tokenOffsetArr.push(tokenPos); 
                 eventOffsetArr.push(eventPos);
                 
                 tile.position.x = tilePos.x; 
@@ -115,21 +117,21 @@ class Grid {
 
         if(tile.terrain == "land"){
             var rotation = new THREE.Vector3(THREE.MathUtils.degToRad(90), 0, 0);
-            token = model.loadBee(tile.position, rotation, 0, tile.name);
+            token = model.loadBee(tokenOffsetArr[tile.name], rotation, 0, tile.name);
             token.name = tile.name;
             token.tokenType = "bee";    
             return token; 
         }
 
         else if(tile.terrain == "coast"){
-            token = model.loadCoral(tile.position, tile.name);
+            token = model.loadCoral(tokenOffsetArr[tile.name], tile.name);
             token.name = tile.name;
             token.tokenType = "coral";    
             return token; 
         }
 
         else if(tile.terrain == "sea"){
-            token = model.loadFish(tile.position, tile.name);
+            token = model.loadFish(tokenOffsetArr[tile.name], tile.name);
             token.name = tile.name;
             token.tokenType = "fish";
             return token; 
@@ -172,6 +174,10 @@ class Grid {
             }
             return null; 
         }
+    }
+
+    getTokenOffsetArray(){
+        return tokenOffsetArr;
     }
 };
 

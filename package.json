@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "start": "http-server -c-1 -p 8080 -o"
+  },
   "devDependencies": {
     "three": "^0.140.0"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
   }
 }
