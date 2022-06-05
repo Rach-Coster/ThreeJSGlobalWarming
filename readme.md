@@ -1,5 +1,7 @@
 # Global Warming Simulator
 
+### Please note: This application only works in chromium-based browsers (for now)
+
 ## How to Run
 
 If you are using visual studio code, you can use the Live Server extension:
