@@ -1,13 +1,27 @@
 import * as THREE from 'three';
 
 import {FontLoader} from '../node_modules/three/examples/jsm/loaders/FontLoader.js';
+import {TextGeometry} from '../node_modules/three/examples/jsm/geometries/TextGeometry.js'
 
 const fontLoader = new FontLoader();
+ 
 
 const matDark = new THREE.LineBasicMaterial({
     color: 0xFFFFFF,
     side: THREE.DoubleSide
 });
+
+const matRed = new THREE.LineBasicMaterial({
+    color: 0xFF0000,
+    side: THREE.DoubleSide
+});
+
+const matBlack = new THREE.LineBasicMaterial({
+    color: 0x000000,
+    side: THREE.DoubleSide
+});
+
+
 
 var currentYear = 2050;
 var totalMoves = 10; 
@@ -127,6 +141,76 @@ class Ui{
 
     setMoves(amount) {
         totalMoves = amount; 
+    }
+
+    getGameOver(){
+        const gameOver = new THREE.Object3D(); 
+        const newGameButton = new THREE.Group();
+
+        fontLoader.load('../node_modules/three/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+           
+            const gameOverText = font.generateShapes('Game Over', 3);
+            const yearsSurvivedText = font.generateShapes('You made it to the year: ' + currentYear, 0.75);
+            const newGameText = font.generateShapes('New Game', 1);
+            
+            const gameOverSettings = {
+                bevelEnabled: true,  
+                bevelSize: 0.1, 
+            };
+
+            const yearsSurvivedSettings = {
+                bevelEnabled: true,  
+                bevelSize: 0.015,
+                bevelThickness: 0,
+                depth: 0
+            };
+
+            const gameOverGeometry = new THREE.ExtrudeGeometry(gameOverText, gameOverSettings);
+            const yearsSurvivedGeometry = new THREE.ExtrudeGeometry(yearsSurvivedText, yearsSurvivedSettings);
+
+            const newGameGeometry = new THREE.ShapeGeometry(newGameText); 
+
+            const boxGeometry = new THREE.BoxGeometry(10, 2, 0.1);
+
+            const materials = [matRed, matBlack]; 
+            const boxMaterial = new THREE.MeshBasicMaterial({color: 0x000000});
+
+            const gameOverMesh = new THREE.Mesh(gameOverGeometry, materials);
+
+            gameOverMesh.position.x = -10.7;
+            gameOverMesh.position.y = 1;
+            gameOverMesh.position.z = 2;
+
+            const yearsSurvivedMesh = new THREE.Mesh(yearsSurvivedGeometry, matDark);
+
+            yearsSurvivedMesh.position.x = -7;
+            yearsSurvivedMesh.position.y = -1.5; 
+            yearsSurvivedMesh.position.z = 2; 
+ 
+           
+            const box = new THREE.Mesh(boxGeometry, boxMaterial);
+            box.position.y = -4.1; 
+            box.position.z = 1.9; 
+
+            box.name = "newGame"; 
+            
+            const newGameMesh = new THREE.Mesh(newGameGeometry, matDark);
+            
+            newGameMesh.position.x = -3.25;
+            newGameMesh.position.y = -4.5; 
+            newGameMesh.position.z = 2; 
+
+            newGameMesh.name = 'newGame';
+            
+            newGameButton.add(box);
+            newGameButton.add(newGameMesh);
+
+            gameOver.attach(gameOverMesh);
+            gameOver.attach(yearsSurvivedMesh);
+            gameOver.attach(newGameButton); 
+        });
+
+        return gameOver; 
     }
 }
 

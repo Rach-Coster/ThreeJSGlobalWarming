@@ -55,10 +55,10 @@ console.log("Tile Arr: ", tileArr);
 
 var tokenArr = []; 
 var deadTokenArr = []; 
-
-var maxBees = 20;
-var maxCoral = 20;
-var maxFish = 40;
+//20, 20, 40
+var maxBees = 1;
+var maxCoral = 1;
+var maxFish = 1;
 
 var maxTokens = maxBees + maxCoral + maxFish; 
 
@@ -320,6 +320,7 @@ window.addEventListener('resize', () => {
 
 var itemInstance;
 var priorGrid; 
+var gameOver = false;
 var tokenOffsetArr = grid.getTokenOffsetArray(); 
 
 var getEarthquakeTilePositions = (tileName) => {
@@ -400,7 +401,7 @@ document.addEventListener('pointerdown', (event) => {
     
     const intersects = raycaster.intersectObjects(scene.children);
 
-    if(intersects.length > 0 && intersects[0].object.name == "button"){
+    if(intersects.length > 0 && intersects[0].object.name == "button" && !gameOver){
         if(priorGrid && priorGrid.material.visible)
             priorGrid.material.visible = false;      
             
@@ -488,27 +489,47 @@ document.addEventListener('pointerdown', (event) => {
 
         renderer.renderLists.dispose();
 
-        randEvent = Math.floor(Math.random() * 4);
+        if(deadTokenArr.length == maxTokens){
+            scene.add(ui.getGameOver());     
 
-        eventArr = randomEvent(); 
-        earthquakePosArr = getEarthquakeTilePositions(eventArr.name);
+            scene.remove(movesLeft);
+            ui.setMoves(0);
+
+            movesLeft = ui.getMoves();
+            scene.add(movesLeft);
+
+            gameOver = true;
+        }
+
+        else {
+            randEvent = Math.floor(Math.random() * 4);
+
+            eventArr = randomEvent(); 
+            earthquakePosArr = getEarthquakeTilePositions(eventArr.name);
+        
+            console.log("Event Arr: ", eventArr);
+
+            scene.remove(currentYear);
+            
+            ui.setYear(2); 
+            currentYear = ui.getYear();
+            scene.add(currentYear);
+            
+            scene.remove(movesLeft);
+            
+            //Change this to get totalMoves and setTotalMoves within the Ui class
+            totalMoves = 10; 
+            ui.setMoves(totalMoves);
+
+            movesLeft = ui.getMoves();
+            scene.add(movesLeft);
+        }
+         
+    }
+
     
-        console.log("Event Arr: ", eventArr);
-
-        scene.remove(currentYear);
-        
-        ui.setYear(2); 
-        currentYear = ui.getYear();
-        scene.add(currentYear);
-        
-        scene.remove(movesLeft);
-        
-        //Change this to get totalMoves and setTotalMoves within the Ui class
-        totalMoves = 10; 
-        ui.setMoves(totalMoves);
-
-        movesLeft = ui.getMoves();
-        scene.add(movesLeft); 
+    else if(intersects.length > 0 && intersects[0].object.name == "newGame"){
+       console.log("New game!");
     }
 
     else if(intersects.length > 0 && intersects[0].object.type != "GridHelper" && totalMoves != 0){

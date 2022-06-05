@@ -5,7 +5,7 @@ import Events from './events.js';
 const model = new Models; 
 const event = new Events;  
 
-const textureLoader = new THREE.TextureLoader();
+
 
 var tokenOffsetArr = []; 
 var eventOffsetArr = []; 
@@ -25,8 +25,6 @@ class Grid {
     generateTiles() {
         var tileArr = [];
 
-        const tileTexture = textureLoader.load('../Textures/placeholder.jpg');
-
         var totalX = -13.5;
         var totalY = 6.7;
         var totalNo = 0; 
@@ -34,8 +32,7 @@ class Grid {
         for(var i = 0; i < 20; i++){
             for(var j = 0; j < 20; j++){  
                 var tileGeometry = new THREE.BoxGeometry(1.3, 0.65, 0.1);
-                var tileMesh = new THREE.MeshPhongMaterial();
-                tileMesh.map = tileTexture; 
+                var tileMesh = new THREE.MeshBasicMaterial; 
                 tileMesh.visible = false; 
 
                 var tile = new THREE.Mesh(tileGeometry, tileMesh);
