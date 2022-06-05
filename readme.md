@@ -9,15 +9,12 @@ Otherwise, use a unix-based command prompt and go to where the you have download
 
 ```
 npm install
-
 ```
 
 This will install all of the node modules you will need to run the project. To run the project type in:
 
 ```
-
 npm start 
-
 ```
 
 The game should open automatically on  `http://127.0.0.1:8080`
@@ -30,27 +27,27 @@ Please let me know if there are any issues via the `issues` tab :blush:
 A lot of things! 
 
 There is now: 
-*Accurate selection and movement of tokens
-*Tiles will highlight when a token is clicked, this will show you which squares the token can be moved
-*A turns counter
-*Each turn will have a unique natural disaster
-*Natural disasters
-    *Heatwaves
-    *Contaminated Water
-    *Fires
-    *Earthquakes
-*A death state for each token
-*The ability to get a game over
-*The option to start a new game
+* Accurate selection and movement of tokens
+* Tiles will highlight when a token is clicked, this will show you which squares the token can be moved
+* A turns counter
+* Each turn will have a unique natural disaster
+* Natural disasters
+    * Heatwaves
+    * Contaminated Water
+    * Fires
+    * Earthquakes
+* A death state for each token
+* The ability to get a game over
+* The option to start a new game
 
 ## Controls
-This game uses the three.js orbit controller however, I have removed the rotate function.
+This game uses the three.js orbit controller however, I have removed rotate functionality.
 
 The controls are as follows
 
-*Holding down right click - Pans through the scene 
-*Scroll - Zoom in and out 
-*Left click - Basic interaction with buttons and tokens on the board
+* Holding down right click - Pans through the scene 
+* Scroll - Zoom in and out 
+* Left click - Basic interaction with buttons and tokens on the board
 
 ## How to Play
 
