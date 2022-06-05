@@ -1,15 +1,16 @@
 import * as THREE from 'three';
 import {SVGLoader} from '../node_modules/three/examples/jsm/loaders/SVGLoader.js'; 
-
+//Loading svg images
 const loader = new SVGLoader(); 
 
 var circleArr = []; 
 
 class Events {
     getEarthquake(position) {
+        //Scaling the circles between 0.1 and 0.5 
         var rand = Math.floor(Math.random() * 5 + 1) * 0.1;
         
-        //remove meshes that are not needed
+        //Creating three circles for the earthquake
         for(var i = 0; i < 3; i++){    
             var circleGeometry = new THREE.CircleGeometry(5, 30);
             var circleMaterial = new THREE.MeshBasicMaterial( {color: 0xFFFFF00, transparent: true, opacity: 0.5});
@@ -29,8 +30,8 @@ class Events {
             }
             else if(i == 1){
                 
-                if(circleArr[i - 1].scale.x <= 0.5 && circleArr[i - 1].scale.x >= 0.2){
-                    
+                //An orange circle will appear if the yellow circle's scale is larger than 0.2
+                if(circleArr[i - 1].scale.x <= 0.5 && circleArr[i - 1].scale.x >= 0.2){ 
                     circleMesh.material.color.setHex(0xFF6A06);
                     circleMesh.scale.x = circleArr[i - 1].scale.x - 0.1;
                     circleMesh.scale.y = circleArr[i - 1].scale.y - 0.1;
@@ -38,6 +39,7 @@ class Events {
                     circleArr.push(circleMesh);
                 }
             }
+            //A red circle will appear if the orange circle's scale is larger than 0.2
             else if(i == 2 && circleArr.length == 2){
                 if(circleArr[i - 1].scale.x <= 0.4 && circleArr[i - 1].scale.x >= 0.2){
 
@@ -54,6 +56,7 @@ class Events {
     }
 
     createFire(position){
+        //Loading a fire image (svg image type)
         var group = new THREE.Group(); 
         loader.load('../Svgs/fire.svg', (image) => {
             const paths = image.paths;
@@ -93,7 +96,8 @@ class Events {
         return group; 
     }
 
-    createWave(position){
+    createTsunami(position){
+        //Loading a tsunami image (svg image type)
         var group = new THREE.Group(); 
         loader.load('../Svgs/wave.svg', (image) => {
             const paths = image.paths;
@@ -137,6 +141,7 @@ class Events {
     }
 
     createHeatwave(position){
+        //Loading a heatwave image (svg image type)
         var group = new THREE.Group(); 
         loader.load('../Svgs/heatwave.svg', (image) => {
             const paths = image.paths;

@@ -2,18 +2,20 @@ import * as THREE from 'three';
 
 import {GLTFLoader} from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import {DRACOLoader} from '../node_modules/three/examples/jsm/loaders/DRACOLoader.js';
+//Using GTLF models
+var loader = new GLTFLoader();
 
-var loader = new GLTFLoader(); 
+//Loading via the draco loader to increase load time and condensing each model's number of vertices
 const dracoLoader = new DRACOLoader(); 
 const textureLoader = new THREE.TextureLoader();
 
 dracoLoader.setDecoderPath('../node_modules/three/examples/js/libs/draco/');
 dracoLoader.preload();
-
+//Attaching the Draco loader to the GLTF loader
 loader.setDRACOLoader(dracoLoader);
 
 var mixers = []; 
-
+//Loading textures for each model
 var earthTexture = textureLoader.load('../Textures/Earth/earth.png');
 var earthBumpMap = textureLoader.load('../Textures/Earth/earthBumpMap.png');
 
@@ -21,7 +23,7 @@ var beeTexture = textureLoader.load('../Textures/Bee/bee.png');
 var beeNormalMap = textureLoader.load('../Textures/Bee/beeNormalMap.png');
 var beeAoMap = textureLoader.load('../Textures/Bee/beeAoMap.png');
 var beeSpecMap = textureLoader.load('../Textures/Bee/beeSpecMap.png');
-
+//Flipping textures dimensions 
 var coralTexture = textureLoader.load('../Textures/Coral/coral.png');
 coralTexture.flipY = false;
 coralTexture.flipW = false;        
@@ -153,7 +155,7 @@ class models {
 
         return map; 
     }
-
+    //Getting a list of the aniamtion mixers for each object
     getMixers(){
         return mixers; 
     }

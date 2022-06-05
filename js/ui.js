@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 
 import {FontLoader} from '../node_modules/three/examples/jsm/loaders/FontLoader.js';
-import {TextGeometry} from '../node_modules/three/examples/jsm/geometries/TextGeometry.js'
 
 const fontLoader = new FontLoader();
- 
 
+//Three different font colours
 const matDark = new THREE.LineBasicMaterial({
     color: 0xFFFFFF,
     side: THREE.DoubleSide
@@ -21,8 +20,7 @@ const matBlack = new THREE.LineBasicMaterial({
     side: THREE.DoubleSide
 });
 
-
-
+//default year and default moves 
 var currentYear = 2050;
 var totalMoves = 10; 
 
@@ -51,7 +49,7 @@ class Ui{
     getButton(){
         var button = new THREE.Group(); 
         fontLoader.load('../node_modules/three/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-            
+            //Creating a next turn button
             var boxGeometry = new THREE.BoxGeometry(3.8, 1, 0.1); 
             var boxTexture = new THREE.MeshBasicMaterial({color: 0x000000});
             var box = new THREE.Mesh(boxGeometry, boxTexture);
@@ -79,7 +77,7 @@ class Ui{
         button.position.x = 8;
         button.position.y = 8.2;
         button.position.z = 0;
-
+        //Adding both the text and the box to a group in order to create a clickable button
         return button; 
     }
 
@@ -173,11 +171,12 @@ class Ui{
                 depth: 0
             };
 
+            //Using extrudeGeometry to create depth for the gameOver text and the yearsSurvived text
             const gameOverGeometry = new THREE.ExtrudeGeometry(gameOverText, gameOverSettings);
             const yearsSurvivedGeometry = new THREE.ExtrudeGeometry(yearsSurvivedText, yearsSurvivedSettings);
 
             const newGameGeometry = new THREE.ShapeGeometry(newGameText); 
-
+            //Creating a new game button
             const boxGeometry = new THREE.BoxGeometry(10, 2, 0.1);
 
             const materials = [matRed, matBlack]; 
@@ -209,7 +208,7 @@ class Ui{
             newGameMesh.position.z = 2; 
 
             newGameMesh.name = 'newGame';
-            
+            //Adding the button to a group so that the entire group is clickable
             newGameButton.add(box);
             newGameButton.add(newGameMesh);
 
